@@ -4,7 +4,7 @@ public abstract class Zombie extends Character {
     protected float speed;
     
     /**
-     * Hace que el zombie avance en el tablero
+     * Nos sirve para que el zombie avance en el tablero
      */
     public abstract void advance();
     

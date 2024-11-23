@@ -19,7 +19,6 @@ public class Cell {
         this.occupant = null;
     }
     
-    // Getters y setters
     public Character getOccupant() { return occupant; }
     public Point getPosition() { return position; }
     public boolean isOccupied() { return isOccupied; }

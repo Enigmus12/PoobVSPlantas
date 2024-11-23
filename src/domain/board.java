@@ -180,8 +180,7 @@ public class board {
         * Genera soles periódicamente en el juego
         */
     private void generateSuns() {
-        // Lógica para generar soles naturalmente durante el juego
-        if (Math.random() < 0.05) { // 5% de probabilidad cada actualización
+        if (Math.random() < 0.50) { 
             suns += 25;
         }
     }

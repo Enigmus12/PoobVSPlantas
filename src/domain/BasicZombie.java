@@ -16,11 +16,9 @@ public class BasicZombie extends Zombie {
     
     @Override
     public void attack() {
-        // Implementación del ataque básico
     }
     
     @Override
     public void checkCollision() {
-        // Verificación de colisiones
     }
 }

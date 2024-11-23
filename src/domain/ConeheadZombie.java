@@ -21,11 +21,9 @@ public class ConeheadZombie extends Zombie {
     
     @Override
     public void attack() {
-        // Implementación del ataque
     }
     
     @Override
     public void checkCollision() {
-        // Verificación de colisiones
     }
 }

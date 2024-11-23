@@ -9,7 +9,6 @@ public class Sunflower extends Plant {
         this.sunCost = 50;
         this.sunProduction = 25;
         this.productionTime = 20; // segundos
-        this.rechargeTime = 7; // segundos
     }
     
     /**
