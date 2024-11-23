@@ -18,7 +18,7 @@ public class OnePlayer extends JFrame {
         prepareActions();
     }
     private void makeButtonTransparent(JButton button) {
-        button.setOpaque(false); // Hace que el fondo del botón sea transparente
+        button.setOpaque(true); // Hace que el fondo del botón sea transparente
         button.setContentAreaFilled(false); // Elimina el relleno del botón
         button.setBorderPainted(false); // Elimina el borde del botón
     }
