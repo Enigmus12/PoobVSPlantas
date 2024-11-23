@@ -1,0 +1,38 @@
+package domain;
+
+public abstract class Character {
+    protected int positionX;
+    protected int positionY;
+    protected int health;
+    
+    /**
+     * Verificamos si el personaje está vivo
+     * @return true si el personaje tiene vida mayor a 0
+     */
+    public boolean isAlive() {
+        return health > 0;
+    }
+    
+    /**
+     * Método para recibir daño
+     * @param amount cantidad de daño a recibir
+     */
+    public void receiveDamage(int amount) {
+        this.health -= amount;
+        if (this.health < 0) this.health = 0;
+    }
+    
+    /**
+     * Actualiza la posición del personaje
+     * @param x nueva posición en X
+     * @param y nueva posición en Y
+     */
+    public void updatePosition(int x, int y) {
+        this.positionX = x;
+        this.positionY = y;
+    }
+
+    public int getPositionX() { return positionX; }
+    public int getPositionY() { return positionY; }
+    public int getHealth() { return health; }
+}
