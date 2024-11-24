@@ -5,15 +5,17 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import domain.Character;
+import domain.Plant;
+import domain.Zombie;
 
 public class GameCell extends JButton {
     private GameCell previous; // Referencia al nodo anterior
     private GameCell next;     // Referencia al nodo siguiente
     private int row;
     private int column;
-    private List<Character> plants;  // Plantas en la celda
-    private List<Character> zombies; // Zombis en la celda
-    private List<Character> peas;    // Guisantes en la celda
+    private List<Plant> plants;  // Plantas en la celda
+    private List<Zombie> zombies; // Zombis en la celda
+    private List<Plant> peas;// Guisantes en la celda
 
     private ImageIcon backgroundImage; // Imagen de fondo (planta o decoración)
 
@@ -55,20 +57,20 @@ public class GameCell extends JButton {
     }
 
     // Métodos para gestionar plantas
-    public void addPlant(Character plant) {
+    public void addPlant(Plant plant) {
         plants.add(plant);
     }
 
-    public void removePlant(Character plant) {
+    public void removePlant(Plant plant) {
         plants.remove(plant);
     }
 
-    public List<Character> getPlants() {
+    public List<Plant> getPlants() {
         return plants;
     }
 
     // Métodos para gestionar zombis
-    public void addZombie(Character zombie) {
+    public void addZombie(Zombie zombie) {
         zombies.add(zombie);
     }
 
@@ -76,20 +78,20 @@ public class GameCell extends JButton {
         zombies.remove(zombie);
     }
 
-    public List<Character> getZombies() {
+    public List<Zombie> getZombies() {
         return zombies;
     }
 
     // Métodos para gestionar guisantes
-    public void addPea(Character pea) {
+    public void addPea(Plant pea) {
         peas.add(pea);
     }
 
-    public void removePea(Character pea) {
+    public void removePea(Plant pea) {
         peas.remove(pea);
     }
 
-    public List<Character> getPeas() {
+    public List<Plant> getPeas() {
         return peas;
     }
 
