@@ -105,9 +105,7 @@ public class MainMenu extends JFrame {
         twoPlayer.addActionListener(e -> mainApp.showTwoPlayer());
 
         // Acción del botón "Machine VS Machine"
-        machineVsMachine.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Machine VS Machine mode selected!");
-        });
+        machineVsMachine.addActionListener(e -> mainApp.showScreenGame());
 
         // Acción del botón "Exit"
         exit.addActionListener(e -> {
