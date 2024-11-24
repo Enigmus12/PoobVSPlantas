@@ -5,6 +5,7 @@ import domain.Peashooter;
 import domain.Plant;
 import domain.Sunflower;
 import domain.WallNut;
+import domain.eciPlant;
 import domain.PoobVSZombiesExeption;
 import domain.PotatoMine;
 
@@ -66,11 +67,13 @@ public class ScreenGame extends JFrame {
         JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg");
         JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg");
         JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg");
+        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaeciPlant.jpg");
     
         plantsPanel.add(sunflowerButton);
         plantsPanel.add(peashooterButton);
         plantsPanel.add(walnutButton);
         plantsPanel.add(potatoMineButton);
+        plantsPanel.add(eciPlantMineButton);
     
         // Panel para el contador de soles
         JPanel sunsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -196,6 +199,9 @@ public class ScreenGame extends JFrame {
                         case "PotatoMine":
                             plant = new PotatoMine(row, col);
                             break;
+                        case "eciPlant":
+                            plant = new eciPlant(row, col);
+                        break;
                     
                     }
         
