@@ -174,11 +174,20 @@ public class ScreenGame extends JFrame {
                 GameCell cell = new GameCell(i, j);
                 cells[i][j] = cell;
                 panel.add(cell);
+
+                // Conectar horizontalmente
+                if (j > 0) {
+                    cells[i][j - 1].setNext(cell); // La celda a la izquierda apunta a la actual
+                    cell.setPrevious(cells[i][j - 1]); // La celda actual apunta a la izquierda
+                }
+
+                // Las celdas en los bordes mantienen previous o next como null automáticamente
             }
         }
 
         return panel;
     }
+
 
     private void updateSunsCounter() {
         sunsLabel.setText("Soles: " + board.getSuns());

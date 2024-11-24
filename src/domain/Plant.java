@@ -9,7 +9,7 @@ public abstract class Plant extends Character {
      * @return true si cumple las condiciones para ser plantada
      */
     public boolean canBePlanted(int row, int column) throws PoobVSZombiesExeption {
-        if (column == 0) {
+        if (column == 0 || column == 9) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
         }
         return true;

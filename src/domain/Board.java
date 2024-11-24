@@ -202,9 +202,7 @@ public class Board {
         }
     }
     public Plant addPlant(String plantType, int row, int column) throws PoobVSZombiesExeption {
-        if (row < 0 || row >= rows || column < 0 || column >= cols) {
-            throw new PoobVSZombiesExeption("Posición inválida en el tablero");
-        }
+
 
         Cell cell = cells[row][column];
 
