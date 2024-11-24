@@ -190,7 +190,7 @@ public class ScreenGame extends JFrame {
                         case "Peashooter":
                             plant = new Peashooter(row, col);
                             break;
-                        case "Wallnut":
+                        case "WallNut":
                             plant = new WallNut(row, col);
                             break;  
                         case "PotatoMine":
@@ -223,17 +223,13 @@ public class ScreenGame extends JFrame {
      * @param plantType Tipo de planta colocada
      */
     private void updateCellVisual(JButton button, String plantType) {
-        try {
-            ImageIcon icon = new ImageIcon("images/" + plantType + ".png");
-            Image scaledImage = icon.getImage().getScaledInstance(
-                button.getWidth(), 
-                button.getHeight(), 
-                Image.SCALE_SMOOTH
-            );
-            button.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            System.err.println("Error al cargar la imagen de la planta: " + e.getMessage());
-        }
+        ImageIcon icon = new ImageIcon("images/" + plantType + ".png");
+        Image scaledImage = icon.getImage().getScaledInstance(
+            button.getWidth(),
+            button.getHeight(),
+            Image.SCALE_SMOOTH
+        );
+        button.setIcon(new ImageIcon(scaledImage));
     }
 
     /**
