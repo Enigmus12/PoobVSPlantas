@@ -5,6 +5,7 @@ import domain.Peashooter;
 import domain.Plant;
 import domain.Sunflower;
 import domain.WallNut;
+import domain.eciPlant;
 import domain.PoobVSZombiesExeption;
 import domain.PotatoMine;
 
@@ -66,11 +67,13 @@ public class ScreenGame extends JFrame {
         JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg");
         JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg");
         JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg");
+        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaeciPlant.jpg");
     
         plantsPanel.add(sunflowerButton);
         plantsPanel.add(peashooterButton);
         plantsPanel.add(walnutButton);
         plantsPanel.add(potatoMineButton);
+        plantsPanel.add(eciPlantMineButton);
     
         // Panel para el contador de soles
         JPanel sunsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -190,12 +193,15 @@ public class ScreenGame extends JFrame {
                         case "Peashooter":
                             plant = new Peashooter(row, col);
                             break;
-                        case "Wallnut":
+                        case "WallNut":
                             plant = new WallNut(row, col);
                             break;  
                         case "PotatoMine":
                             plant = new PotatoMine(row, col);
                             break;
+                        case "eciPlant":
+                            plant = new eciPlant(row, col);
+                        break;
                     
                     }
         
@@ -223,17 +229,13 @@ public class ScreenGame extends JFrame {
      * @param plantType Tipo de planta colocada
      */
     private void updateCellVisual(JButton button, String plantType) {
-        try {
-            ImageIcon icon = new ImageIcon("images/" + plantType + ".png");
-            Image scaledImage = icon.getImage().getScaledInstance(
-                button.getWidth(), 
-                button.getHeight(), 
-                Image.SCALE_SMOOTH
-            );
-            button.setIcon(new ImageIcon(scaledImage));
-        } catch (Exception e) {
-            System.err.println("Error al cargar la imagen de la planta: " + e.getMessage());
-        }
+        ImageIcon icon = new ImageIcon("images/" + plantType + ".png");
+        Image scaledImage = icon.getImage().getScaledInstance(
+            button.getWidth(),
+            button.getHeight(),
+            Image.SCALE_SMOOTH
+        );
+        button.setIcon(new ImageIcon(scaledImage));
     }
 
     /**
