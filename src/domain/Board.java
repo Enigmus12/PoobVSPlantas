@@ -96,7 +96,7 @@ public class Board {
         }
     
         if (suns < plant.getSunCost()) {
-            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.NO_ENOUGH_SUNS);
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INSUFFICIENT_SUNS);
         }
     
         // Colocamos la planta en la celda.
@@ -201,7 +201,57 @@ public class Board {
             }
         }
     }
-    
+    public Plant addPlant(String plantType, int row, int column) throws PoobVSZombiesExeption {
+        if (row < 0 || row >= rows || column < 0 || column >= cols) {
+            throw new PoobVSZombiesExeption("Posición inválida en el tablero");
+        }
+
+        Cell cell = cells[row][column];
+
+        // Verifica si la celda está ocupada
+        if (cell.isOccupied()) {
+            throw new PoobVSZombiesExeption("La celda ya está ocupada");
+        }
+
+        Plant plant;
+
+        // Crear la planta según el tipo
+        switch (plantType) {
+            case "Sunflower":
+                plant = new Sunflower(row,column);
+                break;
+            case "Peashooter":
+                plant = new Peashooter(row,column);
+                break;
+            case "WallNut":
+                plant = new WallNut(row,column);
+                break;
+            case "PotatoMine":
+                plant = new PotatoMine(row,column);
+                break;
+            case "EciPlant":
+                plant = new EciPlant(row,column);
+                break;
+            default:
+                throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_PLANT + plantType);
+        }
+
+        // Verifica si la planta puede ser plantada y si hay suficientes soles
+        if (!plant.canBePlanted(row, column)) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
+        }
+        if (suns < plant.getSunCost()) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INSUFFICIENT_SUNS);
+        }
+
+        // Coloca la planta en la celda
+        cell.setOccupant(plant);
+        plant.updatePosition(row, column); // Actualiza la posición de la planta
+        activeCharacters.add(plant);      // Añade la planta a los personajes activos
+
+        suns -= plant.getSunCost();       // Reduce el costo en soles
+        return plant;                     // Retorna la planta creada
+    }
     /**
         * Genera soles periódicamente en el juego
         */
