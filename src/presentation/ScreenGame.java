@@ -27,25 +27,20 @@ public class ScreenGame extends JFrame {
     }
 
     public void prepareElements() {
-        setTitle("Plants vs Zombies");
-        setSize(800, 600);
+        setTitle("Poob vs Zombies");
+        setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Configurar layout principal
-        setLayout(new BorderLayout());
-
         // Crear paneles para cada región
         JPanel header = createHeader();
-        JPanel footer = createPanelWithBackground(Color.LIGHT_GRAY, "Pie de Página");
         JPanel leftPanel = createLeftGridPanel();
-        JPanel rightPanel = createPanelWithBackground(Color.DARK_GRAY, "Panel Derecho");
+        JPanel rightPanel = createRightPanel();
         JPanel centerPanel = createGameBoard();
 
         // Agregar paneles al JFrame
         add(header, BorderLayout.NORTH);
-        add(footer, BorderLayout.SOUTH);
         add(leftPanel, BorderLayout.WEST);
         add(rightPanel, BorderLayout.EAST);
         add(centerPanel, BorderLayout.CENTER);
@@ -59,49 +54,69 @@ public class ScreenGame extends JFrame {
     }
 
     private JPanel createHeader() {
-        JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel header = new JPanel(new BorderLayout());
+        header.setPreferredSize(new Dimension(10, 120));
         header.setBackground(Color.GRAY);
+    
+        // Panel para los botones de las plantas
+        JPanel plantsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        plantsPanel.setBackground(Color.DARK_GRAY);
+    
+        JButton sunflowerButton = createPlantButton("Sunflower", "images/cartaSunFlower.jpg");
+        JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg");
+        JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg");
+        JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg");
+    
+        plantsPanel.add(sunflowerButton);
+        plantsPanel.add(peashooterButton);
+        plantsPanel.add(walnutButton);
+        plantsPanel.add(potatoMineButton);
+    
+        // Panel para el contador de soles
+        JPanel sunsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        sunsPanel.setPreferredSize(new Dimension(200, 120));
+        sunsPanel.setBackground(Color.GRAY);
+    
         sunsLabel = new JLabel("Soles: " + board.getSuns());
-        sunsLabel.setForeground(Color.WHITE);
-        sunsLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        header.add(sunsLabel);
+        sunsLabel.setForeground(Color.YELLOW);
+        sunsLabel.setFont(new Font("Arial", Font.BOLD, 32)); // Fuente más grande y destacada
+        sunsPanel.add(sunsLabel);
+    
+        // Agregar los paneles al header
+        header.add(plantsPanel, BorderLayout.CENTER); // Botones al centro-izquierda
+        header.add(sunsPanel, BorderLayout.EAST);    // Soles a la derecha
+    
         return header;
     }
+    
+ 
 
-    private JPanel createPanelWithBackground(Color color, String text) {
-        JPanel panel = new JPanel();
-        panel.setBackground(color);
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER)); // Centrar el texto
-        JLabel label = new JLabel(text);
-        label.setForeground(Color.WHITE); // Texto blanco
-        panel.add(label);
-        return panel;
+    private JPanel createRightPanel() {
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setPreferredSize(new Dimension(200, 0));
+        rightPanel.setBackground(Color.DARK_GRAY);
+    
+        // Imagen de la Carretera
+        ImageIcon roadIcon = new ImageIcon("images/carretera.png");
+        Image scaledImage = roadIcon.getImage().getScaledInstance(200, 600, Image.SCALE_DEFAULT); 
+        JLabel roadLabel = new JLabel(new ImageIcon(scaledImage));
+    
+        rightPanel.add(roadLabel, BorderLayout.CENTER);
+        return rightPanel;
     }
 
     private JPanel createLeftGridPanel() {
-        JPanel gridPanel = new JPanel(new GridLayout(5, 1, 5, 5));
-        gridPanel.setPreferredSize(new Dimension(150, 0));
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setPreferredSize(new Dimension(200, 0)); 
+        leftPanel.setBackground(Color.LIGHT_GRAY);
 
-        // Crear botón para Plantas
+        ImageIcon davesHouseIcon = new ImageIcon("images/Dave'sHouse.png");
+        Image scaledImage = davesHouseIcon.getImage().getScaledInstance(200, -1, Image.SCALE_SMOOTH);
+        JLabel davesHouseLabel = new JLabel(new ImageIcon(scaledImage));
 
-        JButton sunflowerButton = createPlantButton("Sunflower", "images/cartaSunFlower.png");
-        gridPanel.add(sunflowerButton);
-
-        JButton PeashooterButton = createPlantButton("Peashooter", "images/cartaPeaShooter.png");
-        gridPanel.add(PeashooterButton);
-
-        JButton WalNutButton = createPlantButton("WallNut", "images/cartaWallNut.png");
-        gridPanel.add(WalNutButton);
-
-        JButton PotatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.png");
-        gridPanel.add(PotatoMineButton);
-
-
-
-
-        return gridPanel;
+        leftPanel.add(davesHouseLabel, BorderLayout.CENTER);
+        return leftPanel;
     }
-
     
      /**
      * Botón para seleccionar una planta específica
@@ -114,19 +129,19 @@ public class ScreenGame extends JFrame {
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
-
+    
         // Cargar la imagen
         ImageIcon icon = new ImageIcon(imagePath);
-        Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        Image scaledImage = icon.getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH); // Ajustar tamaño
         button.setIcon(new ImageIcon(scaledImage));
-
+        button.setPreferredSize(new Dimension(90, 110)); // Tamaño fijo para todos los botones
+    
         // Oyente de selección
         button.addActionListener(e -> {
             selectedPlant = plantType;
-            // Mostrar borde de selección
             button.setBorderPainted(true);
         });
-
+    
         return button;
     }
 
@@ -209,7 +224,7 @@ public class ScreenGame extends JFrame {
      */
     private void updateCellVisual(JButton button, String plantType) {
         try {
-            ImageIcon icon = new ImageIcon("images/Carta" + plantType + ".png");
+            ImageIcon icon = new ImageIcon("images/" + plantType + ".png");
             Image scaledImage = icon.getImage().getScaledInstance(
                 button.getWidth(), 
                 button.getHeight(), 
