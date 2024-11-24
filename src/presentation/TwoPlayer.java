@@ -1,6 +1,7 @@
 package presentation;
 import javax.swing.*;
 
+import domain.Board;
 import domain.PoobVSZombiesExeption;
 
 import java.awt.*;
@@ -14,8 +15,9 @@ public class TwoPlayer extends JFrame {
     private JButton back;
     private JPanel backgroundPanel;
     private MainApp mainApp; // Referencia al controlador principal
-
+    private Board board;
     public TwoPlayer(MainApp app){
+        board=Board.getBoard();
         this.mainApp=app;
         prepareElements();
         prepareActions();
@@ -85,16 +87,8 @@ play.addActionListener(e -> {
     String name2 = userNameTwoPlayer.getText().trim();
 
     try {
-        mainApp.getboard().validateNameTwoPlayers(name1, "para el Jugador 1"); // Validar nombre del jugador 1
-        mainApp.getboard().validateNameTwoPlayers(name2, "para el Jugador 2"); // Validar nombre del jugador 2
-
-        // Si ambos nombres son válidos, proceder al juego
-        ScreenGame screenGame = new ScreenGame();
-        screenGame.setVisible(true); // Mostrar la nueva ventana
-
-        // Ocultar la ventana actual
-        this.setVisible(false);
-        this.dispose(); // Liberar recursos de la ventana actual si no se volverá a usar
+        board.validateNameTwoPlayers(name1, name2); // Validar nombre del jugador 1
+        mainApp.showScreenGame();
     } catch (PoobVSZombiesExeption exception) {
         JOptionPane.showMessageDialog(this, exception.getMessage(),
                                       "Error de Validación", JOptionPane.WARNING_MESSAGE);

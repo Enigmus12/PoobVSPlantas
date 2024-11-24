@@ -1,37 +1,73 @@
 package presentation;
 
+import domain.Board;
+import domain.Peashooter;
+import domain.Plant;
+import domain.Sunflower;
+import domain.WallNut;
+import domain.PoobVSZombiesExeption;
+import domain.PotatoMine;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class ScreenGame extends JFrame {
-    
-    public ScreenGame() {
-        setTitle("Game Layout");
+    private Board board;           // Singleton que maneja la lógica del juego
+    private String selectedPlant;  // Almacena el tipo de planta seleccionada actualmente
+    private MainApp app;           
+    private JLabel sunsLabel;      // Etiqueta para mostrar la cantidad de soles
+    private static final int ROWS = 5; 
+    private static final int COLS = 10;
+
+    public ScreenGame(MainApp app) {
+        this.app = app; // Recibir referencia de MainApp
+        this.board = Board.getBoard(); // Obtener instancia del tablero
+        prepareElements();
+        prepareActions();
+    }
+
+    public void prepareElements() {
+        setTitle("Plants vs Zombies");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-        // Usar BorderLayout como layout principal
+        // Configurar layout principal
         setLayout(new BorderLayout());
 
         // Crear paneles para cada región
-        JPanel header = createPanelWithBackground(Color.GRAY, "Encabezado");
+        JPanel header = createHeader();
         JPanel footer = createPanelWithBackground(Color.LIGHT_GRAY, "Pie de Página");
         JPanel leftPanel = createLeftGridPanel();
         JPanel rightPanel = createPanelWithBackground(Color.DARK_GRAY, "Panel Derecho");
-        JPanel centerPanel = createGridPanelWithBackground(5, 10); // Tablero 5x5 con fondo en el centro
+        JPanel centerPanel = createGameBoard();
 
-        // Agregar paneles al BorderLayout
+        // Agregar paneles al JFrame
         add(header, BorderLayout.NORTH);
         add(footer, BorderLayout.SOUTH);
         add(leftPanel, BorderLayout.WEST);
         add(rightPanel, BorderLayout.EAST);
         add(centerPanel, BorderLayout.CENTER);
+
+        // Timer para actualizar el contador de soles
+        Timer sunUpdateTimer = new Timer(1000, e -> updateSunsCounter());
+        sunUpdateTimer.start();
     }
 
-    /**
-     * Crea un panel con un color de fondo y texto centrado.
-     */
+    public void prepareActions() {
+    }
+
+    private JPanel createHeader() {
+        JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        header.setBackground(Color.GRAY);
+        sunsLabel = new JLabel("Soles: " + board.getSuns());
+        sunsLabel.setForeground(Color.WHITE);
+        sunsLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        header.add(sunsLabel);
+        return header;
+    }
+
     private JPanel createPanelWithBackground(Color color, String text) {
         JPanel panel = new JPanel();
         panel.setBackground(color);
@@ -42,107 +78,160 @@ public class ScreenGame extends JFrame {
         return panel;
     }
 
-    /**
-     * Crea un panel con una imagen de fondo.
-     */
-    private JPanel createPanelWithImage(String imagePath) {
-        return new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                // Dibujar imagen de fondo
-                ImageIcon backgroundImage = new ImageIcon(imagePath);
-                g.drawImage(backgroundImage.getImage(), 0, 0, 2000, getHeight(), this);
-            }
-        };
-    }
-
-    /**
-     * Crea un panel izquierdo con GridLayout (5x1) que contiene botones con imágenes.
-     */
     private JPanel createLeftGridPanel() {
-        JPanel gridPanel = new JPanel(new GridLayout(5, 1, 5, 5)); // 5 filas, 1 columna, espaciado de 5px
-        gridPanel.setPreferredSize(new Dimension(150, 0)); // Ancho fijo para el panel izquierdo
+        JPanel gridPanel = new JPanel(new GridLayout(5, 1, 5, 5));
+        gridPanel.setPreferredSize(new Dimension(150, 0));
 
-        // Rutas de las imágenes
-        String[] imagePaths = {
-                "images/cartaSunFlower.jpg",
-                "images/image2.jpg",
-                "images/image3.jpg",
-                "images/image4.jpg",
-                "images/image5.jpg"
-        };
+        // Crear botón para Plantas
 
-        // Agregar botones con imágenes redimensionadas al GridLayout
-        for (String path : imagePaths) {
-            JButton button = createButtonWithScaledImage(path);
-            gridPanel.add(button); // Agregar botón al panel
-        }
+        JButton sunflowerButton = createPlantButton("Sunflower", "images/cartaSunFlower.png");
+        gridPanel.add(sunflowerButton);
+
+        JButton PeashooterButton = createPlantButton("Peashooter", "images/cartaPeaShooter.png");
+        gridPanel.add(PeashooterButton);
+
+        JButton WalNutButton = createPlantButton("WallNut", "images/cartaWallNut.png");
+        gridPanel.add(WalNutButton);
+
+        JButton PotatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.png");
+        gridPanel.add(PotatoMineButton);
+
+
+
 
         return gridPanel;
     }
 
-    /**
-     * Crea un JButton con una imagen escalada dinámicamente.
-     *
-     * @param imagePath Ruta de la imagen
-     * @return JButton con imagen redimensionada
+    
+     /**
+     * Botón para seleccionar una planta específica
+     * @param plantType Tipo de planta 
+     * @param imagePath Ruta de la imagen para el botón
+     * @return JButton configurado para la selección de planta
      */
-    private JButton createButtonWithScaledImage(String imagePath) {
+    private JButton createPlantButton(String plantType, String imagePath) {
         JButton button = new JButton();
-        button.setFocusPainted(false); // Eliminar borde de selección
-        button.setBorderPainted(false); // Eliminar bordes visibles
-        button.setContentAreaFilled(false); // Hacer transparente el fondo
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
 
-        // Cargar la imagen y redimensionarla
-        ImageIcon originalIcon = new ImageIcon(imagePath);
-        Image scaledImage = originalIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Tamaño inicial
-        ImageIcon scaledIcon = new ImageIcon(scaledImage);
-        button.setIcon(scaledIcon); // Establecer la imagen en el botón
+        // Cargar la imagen
+        ImageIcon icon = new ImageIcon(imagePath);
+        Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        button.setIcon(new ImageIcon(scaledImage));
 
-        // Asegurar que la imagen se redimensiona dinámicamente al cambiar el tamaño del botón
-        button.addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
-                int width = button.getWidth();
-                int height = button.getHeight();
-                Image resizedImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                button.setIcon(new ImageIcon(resizedImage));
-            }
+        // Oyente de selección
+        button.addActionListener(e -> {
+            selectedPlant = plantType;
+            // Mostrar borde de selección
+            button.setBorderPainted(true);
         });
 
         return button;
     }
 
-    /**
-     * Crea un panel con un GridLayout y un fondo personalizado.
-     */
-    private JPanel createGridPanelWithBackground(int rows, int cols) {
-        JPanel panel = new JPanel(new GridLayout(rows, cols, 0, 0)) {
+    private JPanel createGameBoard() {
+        JPanel panel = new JPanel(new GridLayout(ROWS, COLS, 2, 2)) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                // Dibujar imagen de fondo
                 ImageIcon backgroundImage = new ImageIcon("images/tablero.jpg");
                 g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
             }
         };
 
-        // Agregar componentes a la cuadrícula (por ejemplo, botones)
-        for (int i = 0; i < rows * cols; i++) {
-            JButton button = new JButton("Cell " + (i + 1));
-            button.setOpaque(false); // Hacer el botón transparente
-            button.setContentAreaFilled(false); // Eliminar relleno
-            button.setBorderPainted(true); // Mostrar bordes
-            panel.add(button);
+        // Crear botones para cada celda
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                JButton cellButton = createCellButton(i, j);
+                panel.add(cellButton);
+            }
         }
+    
         return panel;
+    }
+
+
+    /**
+     * Cremos un botón para una celda específica del tablero
+     * @param row Fila de la celda
+     * @param col Columna de la celda
+     * @return JButton configurado para la celda
+     */
+    private JButton createCellButton(final int row, final int col) {
+        JButton button = new JButton();
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(true);
+
+        button.addActionListener(e -> {
+            if (selectedPlant != null) {
+                try {
+                    Plant plant = null;
+                    switch (selectedPlant) {
+                        case "Sunflower":
+                            plant = new Sunflower(row, col);
+                            break;
+                        case "Peashooter":
+                            plant = new Peashooter(row, col);
+                            break;
+                        case "Wallnut":
+                            plant = new WallNut(row, col);
+                            break;  
+                        case "PotatoMine":
+                            plant = new PotatoMine(row, col);
+                            break;
+                    
+                    }
+        
+                    if (plant != null) {
+                        boolean placed = board.placePlant(plant, row, col);
+                        if (placed) {
+                            updateCellVisual(button, selectedPlant);
+                            selectedPlant = null; // Reset selection
+                            updateSunsCounter(); // Actualizar contador de soles
+                        }
+                    }
+                } catch (PoobVSZombiesExeption exception) {
+                    JOptionPane.showMessageDialog(null, exception.getMessage());
+                } 
+            }
+        });
+        
+
+        return button;
+    }
+
+    /**
+     * Actualizamos el tablero bueno la celda cuando se coloca una planta
+     * @param button Botón de la celda a actualizar
+     * @param plantType Tipo de planta colocada
+     */
+    private void updateCellVisual(JButton button, String plantType) {
+        try {
+            ImageIcon icon = new ImageIcon("images/Carta" + plantType + ".png");
+            Image scaledImage = icon.getImage().getScaledInstance(
+                button.getWidth(), 
+                button.getHeight(), 
+                Image.SCALE_SMOOTH
+            );
+            button.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            System.err.println("Error al cargar la imagen de la planta: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Actualizamos el contador de soles mostrado en el header
+    */
+    private void updateSunsCounter() {
+        sunsLabel.setText("Soles: " + board.getSuns());
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            ScreenGame layout = new ScreenGame();
-            layout.setVisible(true);
+            ScreenGame screenGame = new ScreenGame(null); // null porque no hay MainApp en este ejemplo
+            screenGame.setVisible(true);
         });
     }
 }

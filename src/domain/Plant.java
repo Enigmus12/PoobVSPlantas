@@ -8,8 +8,10 @@ public abstract class Plant extends Character {
      * Verifica si la planta puede ser plantada
      * @return true si cumple las condiciones para ser plantada
      */
-    public boolean canBePlanted() {
-        // Lógica específica para verificar si se puede plantar
+    public boolean canBePlanted(int row, int column) throws PoobVSZombiesExeption {
+        if (column == 0) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
+        }
         return true;
     }
     

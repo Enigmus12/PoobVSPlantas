@@ -4,12 +4,15 @@ public class Sunflower extends Plant {
     private int sunProduction;
     private int productionTime;
     
-    public Sunflower() {
+    
+    public Sunflower(int row, int col) {
         this.health = 300;
         this.sunCost = 50;
         this.sunProduction = 25;
         this.productionTime = 20; // segundos
         this.rechargeTime = 7; // segundos
+        this.positionX = row;
+        this.positionY = col;
     }
     
     /**
