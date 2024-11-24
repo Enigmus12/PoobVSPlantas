@@ -80,37 +80,58 @@ public class ScreenGame extends JFrame {
         JPanel header = new JPanel(new BorderLayout());
         header.setPreferredSize(new Dimension(10, 120));
         header.setBackground(Color.GRAY);
+    
+        // Panel para el contador de soles con imagen de fondo
+        JPanel sunPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                ImageIcon background = new ImageIcon("images/TableroSol.png");
+                g.drawImage(background.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
 
-        // Panel para los botones de las plantas
-        JPanel plantsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        plantsPanel.setBackground(Color.DARK_GRAY);
-
+        sunPanel.setPreferredSize(new Dimension(100, 50)); 
+        sunPanel.setOpaque(false);
+    
+        // Contador de soles
+        sunsLabel = new JLabel("Soles: " + board.getSuns());
+        sunsLabel.setForeground(Color.YELLOW);
+        sunsLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        sunPanel.add(sunsLabel);
+    
+        // Agregar el panel del sol al lado izquierdo
+        header.add(sunPanel, BorderLayout.WEST);
+    
+        // Panel de fondo con botones
+        JPanel backgroundPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                ImageIcon background = new ImageIcon("images/TableroPlantas.png");
+                g.drawImage(background.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        backgroundPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        backgroundPanel.setOpaque(false);
+    
+        // Botones de las plantas
         JButton sunflowerButton = createPlantButton("Sunflower", "images/cartaSunFlower.jpg");
         JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg");
         JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg");
         JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg");
-        JButton eciPlantButton = createPlantButton("EciPlant", "images/cartaEciPlant.jpg");
-
-        plantsPanel.add(sunflowerButton);
-        plantsPanel.add(peashooterButton);
-        plantsPanel.add(walnutButton);
-        plantsPanel.add(potatoMineButton);
-        plantsPanel.add(eciPlantButton);
-
-        // Panel para el contador de soles
-        JPanel sunsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        sunsPanel.setPreferredSize(new Dimension(200, 120));
-        sunsPanel.setBackground(Color.GRAY);
-
-        sunsLabel = new JLabel("Soles: " + board.getSuns());
-        sunsLabel.setForeground(Color.YELLOW);
-        sunsLabel.setFont(new Font("Arial", Font.BOLD, 32)); // Fuente más grande y destacada
-        sunsPanel.add(sunsLabel);
-
-        // Agregar los paneles al header
-        header.add(plantsPanel, BorderLayout.CENTER); // Botones al centro-izquierda
-        header.add(sunsPanel, BorderLayout.EAST);    // Soles a la derecha
-
+        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaeciPlant.jpg");
+    
+        // Agregar botones al panel de fondo
+        backgroundPanel.add(sunflowerButton);
+        backgroundPanel.add(peashooterButton);
+        backgroundPanel.add(walnutButton);
+        backgroundPanel.add(potatoMineButton);
+        backgroundPanel.add(eciPlantMineButton);
+    
+        // Panel para los botones al centro
+        header.add(backgroundPanel, BorderLayout.CENTER);
+    
         return header;
     }
 

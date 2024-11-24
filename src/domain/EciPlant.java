@@ -8,5 +8,7 @@ public class EciPlant extends Plant {
         this.positionX = row;
         this.positionY = col; 
     }
+    
 
 }
+
