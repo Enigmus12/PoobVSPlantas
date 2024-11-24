@@ -117,6 +117,9 @@ public class GameCell extends JButton {
                 setBackgroundImage(null);
         }
     }
+    public void addLawnMower(int row ){
+        setBackgroundImage("images/mower.png");
+    }
 
     // Establecer la imagen de fondo
     public void setBackgroundImage(String imagePath) {

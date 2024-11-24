@@ -91,7 +91,7 @@ public class ScreenGame extends JFrame {
             }
         };
 
-        sunPanel.setPreferredSize(new Dimension(100, 50)); 
+        sunPanel.setPreferredSize(new Dimension(100, 50));
         sunPanel.setOpaque(false);
     
         // Contador de soles
@@ -141,7 +141,7 @@ public class ScreenGame extends JFrame {
         rightPanel.setBackground(Color.DARK_GRAY);
 
         // Imagen de la carretera
-        ImageIcon roadIcon = new ImageIcon("images/carretera.png");
+        ImageIcon roadIcon = new ImageIcon("images/Carretera.png");
         Image scaledImage = roadIcon.getImage().getScaledInstance(200, 600, Image.SCALE_DEFAULT);
         JLabel roadLabel = new JLabel(new ImageIcon(scaledImage));
 
@@ -203,6 +203,9 @@ public class ScreenGame extends JFrame {
                 }
 
                 // Las celdas en los bordes mantienen previous o next como null automáticamente
+                if(j==0){
+                    cell.addLawnMower(i);
+                }
             }
         }
 
