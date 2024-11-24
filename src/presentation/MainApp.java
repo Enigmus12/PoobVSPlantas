@@ -1,21 +1,21 @@
 package presentation;
 
 import javax.swing.*;
-import domain.GameController;
+import domain.board;
 
 public class MainApp {
     private MainMenu menu;
     private OnePlayer onePlayer;
     private TwoPlayer twoPlayer;
-    private GameController gameController;
+    private board board;
 
     public MainApp() {
         prepareElements(); // Inicializar los elementos
-        this.gameController = new GameController();
+        this.board = new board();
     }
 
-    public GameController getGameController() {
-        return gameController;
+    public board getboard() {
+        return board;
     }
 
     public void prepareElements() {

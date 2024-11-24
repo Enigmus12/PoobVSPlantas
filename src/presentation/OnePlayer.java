@@ -100,7 +100,7 @@ public class OnePlayer extends JFrame {
 
             try {
                 // Usar el método de validación GameController
-                mainApp.getGameController().validateNameOnePlayer(name);
+                mainApp.getboard().validateNameOnePlayer(name);
 
                 // Crear instancia de ScreenGame si no hay excepciones
                 ScreenGame screenGame = new ScreenGame();

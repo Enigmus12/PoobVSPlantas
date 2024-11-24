@@ -34,6 +34,11 @@ public class board {
         
         initializeGameTimer();
     }
+
+    /**
+     * Constructor del tablero para los mensajes
+     */
+    public board() {}
     
     /**
      * Inicializa el timer del juego
@@ -190,5 +195,19 @@ public class board {
     public int getSuns() { return suns; }
     public Cell getCell(int row, int col) { return cells[row][col]; }
     public ArrayList<Character> getActiveCharacters() { return activeCharacters; }
+
+
+    public void validateNameOnePlayer(String name) throws PoobVSZombiesExeption {
+        if (name == null || name.trim().isEmpty() || name.equals("Enter your name here") || !name.matches("[a-zA-Z ]+")) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_NAME);
+        }
+    }
+
+    public void validateNameTwoPlayers(String name, String player) throws PoobVSZombiesExeption {
+        if (name == null || name.trim().isEmpty() || name.equals("Name player one") || name.equals("Name player two") || !name.matches("[a-zA-Z ]+")) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_NAME + " " + player);
+        }
+    }
+
 
 }

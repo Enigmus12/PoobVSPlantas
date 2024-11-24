@@ -85,8 +85,8 @@ play.addActionListener(e -> {
     String name2 = userNameTwoPlayer.getText().trim();
 
     try {
-        mainApp.getGameController().validateNameTwoPlayers(name1, "para el Jugador 1"); // Validar nombre del jugador 1
-        mainApp.getGameController().validateNameTwoPlayers(name2, "para el Jugador 2"); // Validar nombre del jugador 2
+        mainApp.getboard().validateNameTwoPlayers(name1, "para el Jugador 1"); // Validar nombre del jugador 1
+        mainApp.getboard().validateNameTwoPlayers(name2, "para el Jugador 2"); // Validar nombre del jugador 2
 
         // Si ambos nombres son válidos, proceder al juego
         ScreenGame screenGame = new ScreenGame();
@@ -95,8 +95,8 @@ play.addActionListener(e -> {
         // Ocultar la ventana actual
         this.setVisible(false);
         this.dispose(); // Liberar recursos de la ventana actual si no se volverá a usar
-    } catch (PoobVSZombiesExeption ex) {
-        JOptionPane.showMessageDialog(this, ex.getMessage(),
+    } catch (PoobVSZombiesExeption exception) {
+        JOptionPane.showMessageDialog(this, exception.getMessage(),
                                       "Error de Validación", JOptionPane.WARNING_MESSAGE);
     }
 });
