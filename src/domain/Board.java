@@ -208,7 +208,7 @@ public class Board {
 
         // Verifica si la celda está ocupada
         if (cell.isOccupied()) {
-            throw new PoobVSZombiesExeption("La celda ya está ocupada");
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_OCUPATED);
         }
 
         Plant plant;
