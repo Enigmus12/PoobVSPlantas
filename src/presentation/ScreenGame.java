@@ -67,13 +67,13 @@ public class ScreenGame extends JFrame {
         JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg");
         JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg");
         JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg");
-        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaeciPlant.jpg");
+        JButton eciPlantButton = createPlantButton("eciPlant", "images/cartaEciPlant.jpg");
     
         plantsPanel.add(sunflowerButton);
         plantsPanel.add(peashooterButton);
         plantsPanel.add(walnutButton);
         plantsPanel.add(potatoMineButton);
-        plantsPanel.add(eciPlantMineButton);
+        plantsPanel.add(eciPlantButton);
     
         // Panel para el contador de soles
         JPanel sunsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
