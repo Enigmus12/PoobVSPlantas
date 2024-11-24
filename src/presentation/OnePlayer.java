@@ -1,6 +1,9 @@
 package presentation;
 
 import javax.swing.*;
+
+import domain.PoobVSZombiesExeption;
+
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -92,8 +95,28 @@ public class OnePlayer extends JFrame {
 
     public void prepareActions() {
         back.addActionListener(e -> mainApp.showMainMenu());
-        play.addActionListener(e -> JOptionPane.showMessageDialog(this, "Game Started!"));
+        play.addActionListener(e -> {
+            String name = userName.getText().trim(); // Eliminar espacios al inicio y al final
+
+            try {
+                // Usar el método de validación GameController
+                mainApp.getGameController().validateNameOnePlayer(name);
+
+                // Crear instancia de ScreenGame si no hay excepciones
+                ScreenGame screenGame = new ScreenGame();
+                screenGame.setVisible(true); // Mostrar la nueva ventana
+
+                // Ocultar la ventana actual
+                this.setVisible(false);
+                this.dispose(); // Liberar recursos de la ventana actual si no se volverá a usar
+            } catch (PoobVSZombiesExeption exception) {
+                JOptionPane.showMessageDialog(this, exception.getMessage(), 
+                                            "Error de Validación", JOptionPane.WARNING_MESSAGE);
+            }
+        });
     }
+
+    
 
 
 }

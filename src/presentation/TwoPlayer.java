@@ -1,5 +1,8 @@
 package presentation;
 import javax.swing.*;
+
+import domain.PoobVSZombiesExeption;
+
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -75,9 +78,28 @@ public class TwoPlayer extends JFrame {
         // Posicionar los botones inicialmente
         repositionButtons();
     }
-    public void prepareActions(){
+    public void prepareActions() {
         back.addActionListener(e -> mainApp.showMainMenu());
-        play.addActionListener(e -> JOptionPane.showMessageDialog(this, "Game Started!"));
+play.addActionListener(e -> {
+    String name1 = userNameOnePlayer.getText().trim(); // Eliminar espacios al inicio y al final
+    String name2 = userNameTwoPlayer.getText().trim();
+
+    try {
+        mainApp.getGameController().validateNameTwoPlayers(name1, "para el Jugador 1"); // Validar nombre del jugador 1
+        mainApp.getGameController().validateNameTwoPlayers(name2, "para el Jugador 2"); // Validar nombre del jugador 2
+
+        // Si ambos nombres son válidos, proceder al juego
+        ScreenGame screenGame = new ScreenGame();
+        screenGame.setVisible(true); // Mostrar la nueva ventana
+
+        // Ocultar la ventana actual
+        this.setVisible(false);
+        this.dispose(); // Liberar recursos de la ventana actual si no se volverá a usar
+    } catch (PoobVSZombiesExeption ex) {
+        JOptionPane.showMessageDialog(this, ex.getMessage(),
+                                      "Error de Validación", JOptionPane.WARNING_MESSAGE);
+    }
+});
     }
 
     public void repositionButtons(){
