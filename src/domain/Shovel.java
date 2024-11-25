@@ -37,4 +37,3 @@ public class Shovel {
         cell.clear();
     }
 }
-

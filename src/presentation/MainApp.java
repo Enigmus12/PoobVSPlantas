@@ -81,7 +81,10 @@ public class MainApp {
         screenGame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Configurar el cierre
         screenGame.setVisible(true); // Mostrar el tablero
     }
-    
+
+
+
+
 
     public static void main(String[] args) {
         MainApp app = new MainApp();
