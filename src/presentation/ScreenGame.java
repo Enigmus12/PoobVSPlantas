@@ -66,7 +66,7 @@ public class ScreenGame extends JFrame {
 
     public void prepareActions() {
 
-
+        // Cada celda del tablero pueda responder cuando el usuario haga clic en ella
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
                 GameCell cell = cells[row][col];
@@ -77,6 +77,7 @@ public class ScreenGame extends JFrame {
     }
 
 
+    // acciones que deben realizarse cuando el usuario hace clic en una celda
     private void handleCellClick(GameCell cell) {
         if (shovelMode) {
             try {
@@ -84,11 +85,8 @@ public class ScreenGame extends JFrame {
                 cell.removePlant();
                 shovelMode = false; // Desactivar modo pala después de usar
                 setCursor(Cursor.getDefaultCursor()); // Restaurar cursor
-            } catch (PoobVSZombiesExeption ex) {
-                JOptionPane.showMessageDialog(this, 
-                    ex.getMessage(),
-                    "Error", 
-                    JOptionPane.ERROR_MESSAGE);
+            } catch (PoobVSZombiesExeption exception) {
+                JOptionPane.showMessageDialog(this, exception.getMessage());
             }
         } else if (selectedPlant != null) {
             try {
@@ -97,11 +95,8 @@ public class ScreenGame extends JFrame {
                 cell.repaint();
                 updateSunsCounter();
                 selectedPlant = null;
-            } catch (PoobVSZombiesExeption ex) {
-                JOptionPane.showMessageDialog(this, 
-                    ex.getMessage(),
-                    "Error", 
-                    JOptionPane.ERROR_MESSAGE);
+            } catch (PoobVSZombiesExeption exception) {
+                JOptionPane.showMessageDialog(this, exception.getMessage());
             }
         } else {
             JOptionPane.showMessageDialog(this,
@@ -159,11 +154,11 @@ public class ScreenGame extends JFrame {
         backgroundPanel.setOpaque(false);
     
         // Botones de las plantas
-        JButton sunflowerButton = createPlantButton("Sunflower", "images/cartaSunFlower.jpg");
-        JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg");
-        JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg");
-        JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg");
-        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaEciPlant.jpg");
+        JButton sunflowerButton = createPlantButton("Sunflower", "images/cartaSunFlower.jpg","images/SunflowerCursor.png");
+        JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg","images/PeashooterCursor.png");
+        JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg","images/wallNutCursor.png");
+        JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg","images/PotatoMineCursor.png");
+        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaeciPlant.jpg","images/eciPlantCursor.png");
     
         // Agregar botones al panel de fondo
         backgroundPanel.add(sunflowerButton);
@@ -259,20 +254,33 @@ public class ScreenGame extends JFrame {
         return leftPanel;
     }
 
-    private JButton createPlantButton(String plantType, String imagePath) {
+    private JButton createPlantButton(String plantType, String imagePath, String cursorImagePath) {
         JButton button = new JButton();
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
-
-        // Cargar la imagen
+    
+        // Cargar la imagen para el botón
         ImageIcon icon = new ImageIcon(imagePath);
         Image scaledImage = icon.getImage().getScaledInstance(80, 100, Image.SCALE_SMOOTH);
         button.setIcon(new ImageIcon(scaledImage));
         button.setPreferredSize(new Dimension(90, 110));
-
-        button.addActionListener(e -> selectedPlant = plantType);
-
+    
+        // oyente
+        button.addActionListener(e -> {
+            selectedPlant = plantType; // Seleccionar el tipo de planta
+    
+            // Cambiar el cursor a uno personalizado para la planta
+            Toolkit toolkit = Toolkit.getDefaultToolkit();
+            Image cursorImage = toolkit.getImage(cursorImagePath);
+            Cursor customCursor = toolkit.createCustomCursor(
+                cursorImage,
+                new Point(0, 0), // Punto activo del cursor
+                plantType + "Cursor" // Nombre del cursor
+            );
+            setCursor(customCursor); 
+        });
+    
         return button;
     }
 
