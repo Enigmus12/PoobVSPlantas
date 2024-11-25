@@ -274,7 +274,6 @@ public class ScreenGame extends JFrame {
 
                     // Validar posición y agregar zombie
                     if (position[0] >= 0 && position[0] < ROWS && position[1] >= 0 && position[1] < COLS) {
-                        board.addZombie(zombieType, position[0]);
                         GameCell cell = cells[position[0]][position[1]];
                         cell.addZombie(zombieType);
                         cell.repaint();
