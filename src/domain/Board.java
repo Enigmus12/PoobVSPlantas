@@ -31,27 +31,35 @@ public class Board {
         return boardSingleton;
     }
 
-    /**
-     * Constructor del tablero
-     * @param rows número de filas
-     * @param cols número de columnas
-     */
+
+    // Nueva instancia de Timer para los soles
+    private Timer sunGenerationTimer;
+
+    private void initializeSunGenerationTimer() {
+        sunGenerationTimer = new Timer(10 * 1000, e -> {
+            generateSuns();
+        });
+        sunGenerationTimer.start(); // Inicia el temporizador
+    }
+
+    // Modifica el constructor de `Board` para llamar al nuevo Timer
     private Board() {
-        namePlayerOne="";
-        namePlayerTwo="";
+        namePlayerOne = "";
+        namePlayerTwo = "";
         this.cells = new Cell[rows][cols];
         this.activeCharacters = new ArrayList<>();
         this.suns = 0;
-        zombieOriginal=new ZombiesOriginal();
-        
+        zombieOriginal = new ZombiesOriginal();
+
         // Inicializar las celdas
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 cells[i][j] = new Cell(i, j);
             }
         }
-        
-        initializeGameTimer();
+
+        initializeGameTimer(); // Ya existente
+        initializeSunGenerationTimer(); // Llama al nuevo Timer
     }
 
 
@@ -60,21 +68,12 @@ public class Board {
      */
     private void initializeGameTimer() {
         gameTimer = new Timer(TIMER_DELAY, e -> {
-            updateGameState();
+
         });
         gameTimer.start();
     }
     
-    /**
-     * Actualiza el estado del juego
-     */
-    private void updateGameState() {
-        moveZombies();
-        updatePlants();
-        checkCollisions();
-        removeDeadCharacters();
-        generateSuns();
-    }
+
     
     /**
      * Intenta colocar una planta en una posición específica.
@@ -110,46 +109,27 @@ public class Board {
         suns -= plant.getSunCost();       // Reducimos el costo en soles.
         return true;
     }
-    
 
-    
-    /**
-     * Añade un zombie al tablero en una fila específica
-     * @param zombie zombie a añadir
-     * @param row fila donde aparecerá
-     */
-    public void addZombie(String type, int row) {
-        if (row < 0 || row >= rows) return;
-        if(type=="ZombieBasic") {
-            BasicZombie zombie =new BasicZombie();
-            zombie.updatePosition(row, cols - 1);
-            cells[row][cols - 1].setOccupant(zombie);
-            activeCharacters.add(zombie);
-        }
+    public void updateGameState() {
+        // Generar soles periódicamente
+        generateSuns();
+
+        // Actualizar las plantas
+        updatePlants();
+
+
+
+        // Verificar colisiones entre zombies y plantas
+        checkCollisions();
+
+        // Eliminar personajes muertos
+        removeDeadCharacters();
     }
-    
-    /**
-     * Mueve los zombies en el tablero
-     */
-    private void moveZombies() {
-        for (Character character : activeCharacters) {
-            if (character instanceof Zombie) {
-                Zombie zombie = (Zombie) character;
-                Point oldPos = new Point(zombie.getPositionX(), zombie.getPositionY());
-                zombie.advance();
-                Point newPos = new Point(zombie.getPositionX(), zombie.getPositionY());
-                
-                // Actualizar las celdas
-                if (!oldPos.equals(newPos)) {
-                    cells[oldPos.x][oldPos.y].clear();
-                    if (newPos.y >= 0) {
-                        cells[newPos.x][newPos.y].setOccupant(zombie);
-                    }
-                }
-            }
-        }
-    }
-    
+
+
+
+
+
     /**
      * Actualiza el estado de todas las plantas
      */
@@ -157,12 +137,13 @@ public class Board {
         for (Character character : activeCharacters) {
             if (character instanceof Plant) {
                 Plant plant = (Plant) character;
-                
+
                 if (plant instanceof Sunflower) {
                     Sunflower sunflower = (Sunflower) plant;
+                    // Generar soles si corresponde
                     suns += sunflower.generateSuns();
                 }
-                
+
                 if (plant instanceof Peashooter) {
                     Peashooter peaShooter = (Peashooter) plant;
                     peaShooter.attack();
@@ -170,7 +151,8 @@ public class Board {
             }
         }
     }
-    
+
+
     /**
      * Revisa y elimina los personajes muertos.
      */
@@ -258,11 +240,10 @@ public class Board {
     /**
         * Genera soles periódicamente en el juego
         */
-    private void generateSuns() {
-        if (Math.random() < 0.1000) { 
-            suns += 25;
-        }
+    public void generateSuns() {
+        suns += 25; // Incrementa la cantidad de soles en 25
     }
+
 
     public int getRows() { return rows; }
     public int getCols() { return cols; }

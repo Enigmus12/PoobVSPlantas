@@ -36,55 +36,36 @@ public class ScreenGame extends JFrame {
         game();
     }
 
-    public void prepareElements() {
+    private void prepareElements() {
         setTitle("Poob vs Zombies");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         remainingTime = 10 * 60;
-        // Crear paneles para cada región
+
+        // Crear paneles
         JPanel header = createHeader();
         JPanel leftPanel = createLeftGridPanel();
         JPanel rightPanel = createRightPanel();
         JPanel centerPanel = createGameBoard();
 
-        // Agregar paneles al JFrame
+        // Agregar paneles
         add(header, BorderLayout.NORTH);
         add(leftPanel, BorderLayout.WEST);
         add(rightPanel, BorderLayout.EAST);
         add(centerPanel, BorderLayout.CENTER);
 
-        // Timer para actualizar el contador de soles y temporizador
+        // Temporizador general del juego
         Timer gameTimer = new Timer(1000, e -> {
-            updateSunsCounter(); // Actualizar soles
-            updateTimer();       // Actualizar tiempo
+            updateSunsCounter(); // Actualiza los soles
+            updateTimer();       // Actualiza el temporizador
         });
-        gameTimer.start();
+        gameTimer.start(); // Arranca el temporizador
     }
 
     public void prepareActions() {
-        // Asignar listeners a cada GameCell del tablero
-        for (int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
-                GameCell cell = cells[row][col];
-                cell.addActionListener(e -> {
-                    if (selectedPlant != null) {
-                        try {
-                            // Intentar colocar la planta en la celda seleccionada
-                            Plant plant = board.addPlant(selectedPlant, cell.getRow(), cell.getColumn());
-                            cell.addPlant(selectedPlant); // Actualizar GameCell con la planta seleccionada
-                            cell.repaint(); // Redibujar la celda
-                            updateSunsCounter(); // Actualizar contador de soles
-                            selectedPlant = null; // Limpiar selección de planta
-                        } catch (PoobVSZombiesExeption ex) {
-                            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                                    "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    } 
-                });
-            }
-        }
+
 
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
@@ -339,43 +320,37 @@ public class ScreenGame extends JFrame {
     }
     private void gameOnePlayer() {
         // Crear un Timer para generar zombies periódicamente
-        Timer zombieSpawnTimer = new Timer(0, e -> {
-            if (remainingTime > 0) {
-                // Generar un tiempo aleatorio entre 10 y 15 segundos
-                int randomInterval = (10 + new Random().nextInt(6)) * 1000; // En milisegundos
+        Timer zombieSpawnTimer = new Timer(10 * 1000, e -> { // Cada 10 segundos
+            // Obtener un zombie aleatorio desde el tablero
+            HashMap<String, int[]> coordenadaZombie = board.gameOnePlayer();
 
-                // Obtener el HashMap de un elemento
-                HashMap<String, int[]> coordenadaZombie = board.gameOnePlayer();
+            if (coordenadaZombie != null && !coordenadaZombie.isEmpty()) {
+                // Obtener la única entrada del HashMap
+                java.util.Map.Entry<String, int[]> entry = coordenadaZombie.entrySet().iterator().next();
 
-                if (coordenadaZombie != null && !coordenadaZombie.isEmpty()) {
-                    // Obtener la única entrada del HashMap
-                    java.util.Map.Entry<String, int[]> entry = coordenadaZombie.entrySet().iterator().next();
+                // Extraer la clave (tipo de zombie) y el valor (posición)
+                String zombieType = entry.getKey();
+                int[] position = entry.getValue();
 
-                    // Extraer la clave y el valor
-                    String zombieType = entry.getKey(); // Tipo de zombie
-                    int[] position = entry.getValue();  // Coordenadas
-
-                    // Validar posición y agregar zombie
-                    if (position[0] >= 0 && position[0] < ROWS && position[1] >= 0 && position[1] < COLS) {
-                        GameCell cell = cells[position[0]][position[1]];
-                        cell.addZombie(zombieType);
-                        cell.repaint();
-                    }
+                // Validar la posición antes de agregar el zombie
+                if (position[0] >= 0 && position[0] < ROWS && position[1] >= 0 && position[1] < COLS) {
+                    GameCell cell = cells[position[0]][position[1]];
+                    cell.addZombie(zombieType);
+                    cell.repaint();
                 }
-
-                // Cambiar el retraso del temporizador al nuevo intervalo aleatorio
-                ((Timer) e.getSource()).setDelay(randomInterval);
             }
+
+            // Cambiar el intervalo del Timer a un valor aleatorio entre 10 y 15 segundos
+            ((Timer) e.getSource()).setDelay((10 + new Random().nextInt(6)) * 1000); // Entre 10-15 segundos
         });
 
-        // Configurar el tiempo inicial del Timer (primer zombie después de 10 segundos)
-        zombieSpawnTimer.setInitialDelay(10 * 1000);
-        zombieSpawnTimer.setRepeats(true); // Repetir indefinidamente
-        zombieSpawnTimer.start(); // Iniciar el temporizador
+        zombieSpawnTimer.setInitialDelay(10 * 1000); // Primer zombie a los 10 segundos
+        zombieSpawnTimer.setRepeats(true);          // Repetir indefinidamente
+        zombieSpawnTimer.start();
     }
 
 
-    
+
 
 
 
