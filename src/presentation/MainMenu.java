@@ -100,12 +100,23 @@ public class MainMenu extends JFrame {
 
 
     private void prepareActions() {
-        onePlayer.addActionListener(e -> mainApp.showOnePlayer());
+        onePlayer.addActionListener(e -> {
+            mainApp.showOnePlayer();
+            mainApp.setGameMode("OnePlayer");
+        }
+        );
         // Acción del botón "2 Players"
-        twoPlayer.addActionListener(e -> mainApp.showTwoPlayer());
+        twoPlayer.addActionListener(e -> {
+            mainApp.showTwoPlayer();
+            mainApp.setGameMode("TwoPlayer");
+        });
 
         // Acción del botón "Machine VS Machine"
-        machineVsMachine.addActionListener(e -> mainApp.showScreenGame());
+        machineVsMachine.addActionListener(e ->{
+            mainApp.showScreenGame();
+            mainApp.setGameMode("Machine vs Machine");
+        }
+        );
 
         // Acción del botón "Exit"
         exit.addActionListener(e -> {

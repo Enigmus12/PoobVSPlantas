@@ -141,4 +141,24 @@ public class GameCell extends JButton {
             g2d.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
         }
     }
+    public void addZombie(String zombieType) {
+        switch (zombieType) {
+            case "ZombieBasic":
+                setBackgroundImage("images/zombieBasic.png");
+                break;
+            case "ConeheadZombie":
+                setBackgroundImage("images/ConeheadZombie.png");
+                break;
+            case "BucketheadZombie":
+                setBackgroundImage("images/BucketheadZombie.png");
+                break;
+            case "FlagZombie":
+                setBackgroundImage("images/FlagZombie.png");
+                break;
+            default:
+                setBackgroundImage(null);
+        }
+        repaint(); // Redibujar la celda para mostrar el zombie
+    }
+
 }

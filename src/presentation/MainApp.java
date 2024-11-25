@@ -9,13 +9,21 @@ public class MainApp {
     private TwoPlayer twoPlayer;
     private ScreenGame screenGame;
     private Board board;
+    private String gameMode;
+
 
     public MainApp() {
         prepareElements(); // Inicializar los elementos
         board = Board.getBoard();
+        gameMode="OnePlayer";
     }
 
-
+    public void setGameMode(String mode){
+        gameMode=mode;
+    }
+    public String getGameMode(){
+        return gameMode;
+    }
 
     public void prepareElements() {
         menu = new MainMenu(this); // Instanciar el menú principal

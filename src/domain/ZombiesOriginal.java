@@ -17,7 +17,7 @@ public class ZombiesOriginal extends Maquina {
         HashMap<String, int[]> resultado = new HashMap<>();
 
         // Crear un ejemplo de valores aleatorios (puedes personalizarlos)
-        int[] valores = {random.nextInt(5) , random.nextInt(3) + 1}; // Ejemplo: daño y rango
+        int[] valores = {random.nextInt(5) , 9}; // Ejemplo: daño y rango
 
         // Agregar el zombie elegido y sus valores al HashMap
         resultado.put(elegido, valores);

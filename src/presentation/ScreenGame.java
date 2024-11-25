@@ -6,6 +6,8 @@ import domain.PoobVSZombiesExeption;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Random;
 
 public class ScreenGame extends JFrame {
     private Board board;           // Singleton que maneja la lógica del juego
@@ -15,6 +17,9 @@ public class ScreenGame extends JFrame {
     private static final int ROWS = 5;
     private static final int COLS = 10;
     private GameCell[][] cells;
+    private int remainingTime; // Tiempo restante en segundos
+    private JLabel timerLabel; // Para mostrar el tiempo restante
+
 
     public ScreenGame(MainApp app) {
         this.app = app; // Recibir referencia de MainApp
@@ -22,6 +27,7 @@ public class ScreenGame extends JFrame {
         this.cells = new GameCell[ROWS][COLS]; // Inicializar matriz de celdas
         prepareElements();
         prepareActions();
+        game();
     }
 
     public void prepareElements() {
@@ -30,7 +36,7 @@ public class ScreenGame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-
+        remainingTime = 10 * 60;
         // Crear paneles para cada región
         JPanel header = createHeader();
         JPanel leftPanel = createLeftGridPanel();
@@ -43,9 +49,12 @@ public class ScreenGame extends JFrame {
         add(rightPanel, BorderLayout.EAST);
         add(centerPanel, BorderLayout.CENTER);
 
-        // Timer para actualizar el contador de soles
-        Timer sunUpdateTimer = new Timer(1000, e -> updateSunsCounter());
-        sunUpdateTimer.start();
+        // Timer para actualizar el contador de soles y temporizador
+        Timer gameTimer = new Timer(1000, e -> {
+            updateSunsCounter(); // Actualizar soles
+            updateTimer();       // Actualizar tiempo
+        });
+        gameTimer.start();
     }
 
     public void prepareActions() {
@@ -99,10 +108,16 @@ public class ScreenGame extends JFrame {
         sunsLabel.setForeground(Color.YELLOW);
         sunsLabel.setFont(new Font("Arial", Font.BOLD, 14));
         sunPanel.add(sunsLabel);
+        JPanel timerPanel = new JPanel();
+        timerPanel.setOpaque(false);
+        timerLabel = new JLabel(formatTime(remainingTime)); // Inicializar etiqueta del temporizador
+        timerLabel.setForeground(Color.WHITE);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        timerPanel.add(timerLabel);
     
         // Agregar el panel del sol al lado izquierdo
         header.add(sunPanel, BorderLayout.WEST);
-    
+        header.add(timerPanel, BorderLayout.EAST);
         // Panel de fondo con botones
         JPanel backgroundPanel = new JPanel() {
             @Override
@@ -133,6 +148,24 @@ public class ScreenGame extends JFrame {
         header.add(backgroundPanel, BorderLayout.CENTER);
     
         return header;
+    }
+    // Método para actualizar el tiempo restante
+    private void updateTimer() {
+        if (remainingTime > 0) {
+            remainingTime--; // Decrementar el tiempo
+            timerLabel.setText(formatTime(remainingTime)); // Actualizar etiqueta del temporizador
+        } else {
+            // Mostrar mensaje cuando el tiempo llega a cero
+            JOptionPane.showMessageDialog(this, "¡El tiempo se acabó!", "Fin del Juego", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0); // Salir del juego o manejar la lógica de fin
+        }
+    }
+
+    // Formatear el tiempo como MM:SS
+    private String formatTime(int seconds) {
+        int minutes = seconds / 60;
+        int secs = seconds % 60;
+        return String.format("%02d:%02d", minutes, secs);
     }
 
     private JPanel createRightPanel() {
@@ -216,6 +249,50 @@ public class ScreenGame extends JFrame {
     private void updateSunsCounter() {
         sunsLabel.setText("Soles: " + board.getSuns());
     }
+    private void game(){
+        if(app.getGameMode()=="OnePlayer"){
+            gameOnePlayer();
+        }
+    }
+    private void gameOnePlayer() {
+        // Crear un Timer para generar zombies periódicamente
+        Timer zombieSpawnTimer = new Timer(0, e -> {
+            if (remainingTime > 0) {
+                // Generar un tiempo aleatorio entre 10 y 15 segundos
+                int randomInterval = (10 + new Random().nextInt(6)) * 1000; // En milisegundos
+
+                // Obtener el HashMap de un elemento
+                HashMap<String, int[]> coordenadaZombie = board.gameOnePlayer();
+
+                if (coordenadaZombie != null && !coordenadaZombie.isEmpty()) {
+                    // Obtener la única entrada del HashMap
+                    java.util.Map.Entry<String, int[]> entry = coordenadaZombie.entrySet().iterator().next();
+
+                    // Extraer la clave y el valor
+                    String zombieType = entry.getKey(); // Tipo de zombie
+                    int[] position = entry.getValue();  // Coordenadas
+
+                    // Validar posición y agregar zombie
+                    if (position[0] >= 0 && position[0] < ROWS && position[1] >= 0 && position[1] < COLS) {
+                        board.addZombie(zombieType, position[0]);
+                        GameCell cell = cells[position[0]][position[1]];
+                        cell.addZombie(zombieType);
+                        cell.repaint();
+                    }
+                }
+
+                // Cambiar el retraso del temporizador al nuevo intervalo aleatorio
+                ((Timer) e.getSource()).setDelay(randomInterval);
+            }
+        });
+
+        // Configurar el tiempo inicial del Timer (primer zombie después de 10 segundos)
+        zombieSpawnTimer.setInitialDelay(10 * 1000);
+        zombieSpawnTimer.setRepeats(true); // Repetir indefinidamente
+        zombieSpawnTimer.start(); // Iniciar el temporizador
+    }
+
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

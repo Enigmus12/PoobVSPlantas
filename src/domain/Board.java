@@ -3,6 +3,7 @@ package domain;
 import java.util.ArrayList;
 import javax.swing.Timer;
 import java.awt.Point;
+import java.util.HashMap;
 
 public class Board {
 
@@ -15,6 +16,7 @@ public class Board {
     private static final int TIMER_DELAY = 100; 
     private String namePlayerOne;
     private String namePlayerTwo;
+    private ZombiesOriginal zombieOriginal;
 
     private static Board boardSingleton;
 
@@ -40,6 +42,7 @@ public class Board {
         this.cells = new Cell[rows][cols];
         this.activeCharacters = new ArrayList<>();
         this.suns = 0;
+        zombieOriginal=new ZombiesOriginal();
         
         // Inicializar las celdas
         for (int i = 0; i < rows; i++) {
@@ -115,12 +118,14 @@ public class Board {
      * @param zombie zombie a añadir
      * @param row fila donde aparecerá
      */
-    public void addZombie(Zombie zombie, int row) {
+    public void addZombie(String type, int row) {
         if (row < 0 || row >= rows) return;
-        
-        zombie.updatePosition(row, cols - 1);
-        cells[row][cols - 1].setOccupant(zombie);
-        activeCharacters.add(zombie);
+        if(type=="ZombieBasic") {
+            BasicZombie zombie =new BasicZombie();
+            zombie.updatePosition(row, cols - 1);
+            cells[row][cols - 1].setOccupant(zombie);
+            activeCharacters.add(zombie);
+        }
     }
     
     /**
@@ -283,6 +288,8 @@ public class Board {
         namePlayerOne=name1;
         namePlayerTwo=name2;
     }
-
+    public HashMap<String,int[]> gameOnePlayer(){
+        return zombieOriginal.attack();
+    }
 
 }
