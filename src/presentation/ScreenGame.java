@@ -154,11 +154,11 @@ public class ScreenGame extends JFrame {
         backgroundPanel.setOpaque(false);
     
         // Botones de las plantas
-        JButton sunflowerButton = createPlantButton("Sunflower", "images/cartaSunFlower.jpg","images/SunflowerCursor.png");
-        JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg","images/PeashooterCursor.png");
-        JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg","images/wallNutCursor.png");
-        JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg","images/PotatoMineCursor.png");
-        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaeciPlant.jpg","images/eciPlantCursor.png");
+        JButton sunflowerButton = createPlantButton("Sunflower", "images/cartaSunFlower.jpg","images/Sunflower.png");
+        JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg","images/Peashooter.png");
+        JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg","images/wallNut.png");
+        JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg","images/PotatoMine.png");
+        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaeciPlant.jpg","images/eciPlant.png");
     
         // Agregar botones al panel de fondo
         backgroundPanel.add(sunflowerButton);
@@ -277,7 +277,7 @@ public class ScreenGame extends JFrame {
             Cursor customCursor = toolkit.createCustomCursor(
                 cursorImage,
                 new Point(0, 0), // Punto activo del cursor
-                plantType + "Cursor" // Nombre del cursor
+                plantType // Nombre del cursor
             );
             setCursor(customCursor); 
         });
