@@ -214,7 +214,7 @@ public class Board {
             case "PotatoMine":
                 plant = new PotatoMine(row,column);
                 break;
-            case "EciPlant":
+            case "eciPlant":
                 plant = new EciPlant(row,column);
                 break;
             default:

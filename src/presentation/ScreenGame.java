@@ -163,7 +163,7 @@ public class ScreenGame extends JFrame {
         JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg");
         JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg");
         JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg");
-        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaeciPlant.jpg");
+        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaEciPlant.jpg");
     
         // Agregar botones al panel de fondo
         backgroundPanel.add(sunflowerButton);

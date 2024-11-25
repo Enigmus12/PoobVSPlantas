@@ -115,7 +115,7 @@ public class GameCell extends JButton {
             case "PotatoMine":
                 setBackgroundImage("images/PotatoMine.png");
                 break;
-            case "EciPlant":
+            case "eciPlant":
                 setBackgroundImage("images/eciPlant.png");
                 break;
             default:
