@@ -268,6 +268,7 @@ public class ScreenGame extends JFrame {
     
         // oyente
         button.addActionListener(e -> {
+            shovelMode = false; // Desactivar modo pala
             selectedPlant = plantType; // Seleccionar el tipo de planta
     
             // Cambiar el cursor a uno personalizado para la planta
