@@ -349,15 +349,4 @@ public class ScreenGame extends JFrame {
         zombieSpawnTimer.start();
     }
 
-
-
-
-
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ScreenGame screenGame = new ScreenGame(null); // null porque no hay MainApp en este ejemplo
-            screenGame.setVisible(true);
-        });
-    }
 }
