@@ -19,6 +19,8 @@ public class GameCell extends JButton {
 
     private ImageIcon backgroundImage; // Imagen de fondo (planta o decoración)
 
+    private String currentPlantType; // tipo de planta actual
+
     public GameCell(int row, int column) {
         super();
         previous = null;
@@ -97,6 +99,9 @@ public class GameCell extends JButton {
 
     // Método para establecer la imagen de fondo según el tipo de planta
     public void addPlant(String plantType) {
+
+        this.currentPlantType = plantType; // Guardar el tipo de planta actual
+
         switch (plantType) {
             case "Sunflower":
                 setBackgroundImage("images/Sunflower.png");
@@ -121,6 +126,16 @@ public class GameCell extends JButton {
         setBackgroundImage("images/mower.png");
     }
 
+    // Método para eliminar la planta
+    public void removePlant() {
+        if (!plants.isEmpty()) {
+            plants.clear(); // Limpiar la lista de plantas
+        }
+        this.currentPlantType = null; // Limpiar el tipo de planta actual
+        this.backgroundImage = null; // Eliminar la imagen de fondo
+        repaint(); // Redibujar la celda
+    }
+
     // Establecer la imagen de fondo
     public void setBackgroundImage(String imagePath) {
         if (imagePath != null) {
@@ -141,6 +156,7 @@ public class GameCell extends JButton {
             g2d.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
         }
     }
+
     public void addZombie(String zombieType) {
         switch (zombieType) {
             case "ZombieBasic":

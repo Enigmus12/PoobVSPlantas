@@ -3,6 +3,7 @@ package presentation;
 import domain.Board;
 import domain.Plant;
 import domain.PoobVSZombiesExeption;
+import domain.Shovel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,11 +21,16 @@ public class ScreenGame extends JFrame {
     private int remainingTime; // Tiempo restante en segundos
     private JLabel timerLabel; // Para mostrar el tiempo restante
 
+    private Shovel shovel;
+    private boolean shovelMode;
+
 
     public ScreenGame(MainApp app) {
         this.app = app; // Recibir referencia de MainApp
         this.board = Board.getBoard(); // Obtener instancia del tablero
         this.cells = new GameCell[ROWS][COLS]; // Inicializar matriz de celdas
+        this.shovel = new Shovel();
+        this.shovelMode = false;
         prepareElements();
         prepareActions();
         game();
@@ -75,15 +81,56 @@ public class ScreenGame extends JFrame {
                             JOptionPane.showMessageDialog(this, ex.getMessage(),
                                     "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(this,
-                                "Seleccione una planta primero.",
-                                "Sin selección", JOptionPane.WARNING_MESSAGE);
-                    }
+                    } 
                 });
             }
         }
+
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                GameCell cell = cells[row][col];
+                cell.addActionListener(e -> handleCellClick(cell));
+            }
+        }
+
     }
+
+
+    private void handleCellClick(GameCell cell) {
+        if (shovelMode) {
+            try {
+                shovel.removePlant(cell.getRow(), cell.getColumn());
+                cell.removePlant();
+                shovelMode = false; // Desactivar modo pala después de usar
+                setCursor(Cursor.getDefaultCursor()); // Restaurar cursor
+            } catch (PoobVSZombiesExeption ex) {
+                JOptionPane.showMessageDialog(this, 
+                    ex.getMessage(),
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (selectedPlant != null) {
+            try {
+                Plant plant = board.addPlant(selectedPlant, cell.getRow(), cell.getColumn());
+                cell.addPlant(selectedPlant);
+                cell.repaint();
+                updateSunsCounter();
+                selectedPlant = null;
+            } catch (PoobVSZombiesExeption ex) {
+                JOptionPane.showMessageDialog(this, 
+                    ex.getMessage(),
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                "Seleccione una planta primero o use la pala.",
+                "Sin selección", 
+                JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+
 
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());
@@ -146,9 +193,45 @@ public class ScreenGame extends JFrame {
     
         // Panel para los botones al centro
         header.add(backgroundPanel, BorderLayout.CENTER);
+
+        // Crear y agregar botón "Shovel" al lado derecho
+        JButton shovelButton = createShovelButton();
+        header.add(shovelButton, BorderLayout.EAST);
     
         return header;
     }
+
+    private JButton createShovelButton() {
+        JButton shovelButton = new JButton();
+        shovelButton.setFocusPainted(false);
+        shovelButton.setBorderPainted(false);
+        shovelButton.setContentAreaFilled(false);
+
+        ImageIcon icon = new ImageIcon("images/shovel.png");
+        Image scaledImage = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+        shovelButton.setIcon(new ImageIcon(scaledImage));
+        shovelButton.setPreferredSize(new Dimension(90, 110));
+    
+        shovelButton.addActionListener(e -> {
+            shovelMode = true;
+            selectedPlant = null;
+        
+            // Con esto cambiamos el mouse a una imagen personalizada
+            Toolkit toolkit = Toolkit.getDefaultToolkit();
+            Image shovelImage = toolkit.getImage("images/Mouse.png");
+            Cursor customCursor = toolkit.createCustomCursor(
+                shovelImage, 
+                new Point(0, 0), // Punto activo del cursor
+                "ShovelCursor"
+            );
+            setCursor(customCursor); // Establecer el cursor personalizado
+        
+        });
+        
+    
+        return shovelButton;
+    }
+
     // Método para actualizar el tiempo restante
     private void updateTimer() {
         if (remainingTime > 0) {
@@ -291,6 +374,9 @@ public class ScreenGame extends JFrame {
         zombieSpawnTimer.setRepeats(true); // Repetir indefinidamente
         zombieSpawnTimer.start(); // Iniciar el temporizador
     }
+
+
+    
 
 
 
