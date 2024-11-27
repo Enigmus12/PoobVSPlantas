@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import domain.Character;
 import domain.Plant;
 import domain.Zombie;
@@ -97,31 +99,23 @@ public class GameCell extends JButton {
         return peas;
     }
 
-    // Método para establecer la imagen de fondo según el tipo de planta
+
     public void addPlant(String plantType) {
+        this.currentPlantType = plantType; // Save the current plant type
 
-        this.currentPlantType = plantType; // Guardar el tipo de planta actual
+        // Map plant types to their respective image paths
+        Map<String, String> plantImages = Map.of(
+                "SunFlower", "images/SunFlower.png",
+                "PeasShooter", "images/PeasShooter.png",
+                "WallNut", "images/WallNut.png",
+                "PotatoMine", "images/PotatoMine.png",
+                "EciPlant", "images/EciPlant.png"
+        );
 
-        switch (plantType) {
-            case "SunFlower":
-                setBackgroundImage("images/SunFlower.png");
-                break;
-            case "PeasShooter":
-                setBackgroundImage("images/PeasShooter.png");
-                break;
-            case "WallNut":
-                setBackgroundImage("images/WallNut.png");
-                break;
-            case "PotatoMine":
-                setBackgroundImage("images/PotatoMine.png");
-                break;
-            case "EciPlant":
-                setBackgroundImage("images/EciPlant.png");
-                break;
-            default:
-                setBackgroundImage(null);
-        }
+        // Set the background image if the plant type exists, otherwise null
+        setBackgroundImage(plantImages.getOrDefault(plantType, null));
     }
+
     public void addLawnMower(int row ){
         setBackgroundImage("images/Mower.png");
     }
