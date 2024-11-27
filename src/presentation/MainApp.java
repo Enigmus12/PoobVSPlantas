@@ -44,42 +44,38 @@ public class MainApp {
         menu.setVisible(true);
     }
 
-    public void showOnePlayer() {
+    public void mostrarVentana(JFrame ventanaAMostrar) {
         // Ocultar todas las demás ventanas
         if (menu != null) menu.setVisible(false);
+        if (onePlayer != null) onePlayer.setVisible(false);
         if (twoPlayer != null) twoPlayer.setVisible(false);
 
-        // Mostrar la ventana de un jugador
+        // Mostrar la ventana deseada
+        if (ventanaAMostrar != null) {
+            ventanaAMostrar.setVisible(true);
+        }
+    }
+
+    public void showOnePlayer() {
         if (onePlayer == null) {
             onePlayer = new OnePlayer(this);
             onePlayer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
-        onePlayer.setVisible(true);
+        mostrarVentana(onePlayer);
     }
 
     public void showTwoPlayer() {
-        // Ocultar todas las demás ventanas
-        if (menu != null) menu.setVisible(false);
-        if (onePlayer != null) onePlayer.setVisible(false);
-
-        // Mostrar la ventana de dos jugadores
         if (twoPlayer == null) {
             twoPlayer = new TwoPlayer(this);
             twoPlayer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
-        twoPlayer.setVisible(true);
+        mostrarVentana(twoPlayer);
     }
 
     public void showScreenGame() {
-        // Ocultar las otras ventanas
-        if (menu != null) menu.setVisible(false); // Ocultar el menú principal
-        if (onePlayer != null) onePlayer.setVisible(false); // Ocultar OnePlayer si está abierto
-        if (twoPlayer != null) twoPlayer.setVisible(false); // Ocultar TwoPlayer si está abierto
-
-        // Crear y mostrar el ScreenGame
-        ScreenGame screenGame = new ScreenGame(this); // Crear la ventana del tablero
-        screenGame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Configurar el cierre
-        screenGame.setVisible(true); // Mostrar el tablero
+        ScreenGame screenGame = new ScreenGame(this);
+        screenGame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mostrarVentana(screenGame);
     }
 
 
