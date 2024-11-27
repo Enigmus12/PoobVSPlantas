@@ -4,7 +4,7 @@ public abstract class Character {
     protected int positionX;
     protected int positionY;
     protected int health;
-    protected String imagePath;
+
     
     /**
      * Verificamos si el personaje está vivo
@@ -37,13 +37,9 @@ public abstract class Character {
         this.health = health;
     }
 
-    public String getImagePath() {
-        return imagePath;
-    }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
+
+
     
     public int getPositionX() { 
         return positionX; 

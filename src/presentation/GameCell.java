@@ -16,7 +16,7 @@ public class GameCell extends JButton {
     private List<Plant> plants;  // Plantas en la celda
     private List<Zombie> zombies; // Zombis en la celda
     private List<Plant> peas;// Guisantes en la celda
-
+    private List<ImageIcon> overlayImages; // Lista de imágenes superpuestas
     private ImageIcon backgroundImage; // Imagen de fondo (planta o decoración)
 
     private String currentPlantType; // tipo de planta actual
@@ -103,11 +103,11 @@ public class GameCell extends JButton {
         this.currentPlantType = plantType; // Guardar el tipo de planta actual
 
         switch (plantType) {
-            case "Sunflower":
-                setBackgroundImage("images/Sunflower.png");
+            case "SunFlower":
+                setBackgroundImage("images/SunFlower.png");
                 break;
-            case "Peashooter":
-                setBackgroundImage("images/Peashooter.png");
+            case "PeasShooter":
+                setBackgroundImage("images/PeasShooter.png");
                 break;
             case "WallNut":
                 setBackgroundImage("images/WallNut.png");
@@ -115,15 +115,15 @@ public class GameCell extends JButton {
             case "PotatoMine":
                 setBackgroundImage("images/PotatoMine.png");
                 break;
-            case "eciPlant":
-                setBackgroundImage("images/eciPlant.png");
+            case "EciPlant":
+                setBackgroundImage("images/EciPlant.png");
                 break;
             default:
                 setBackgroundImage(null);
         }
     }
     public void addLawnMower(int row ){
-        setBackgroundImage("images/mower.png");
+        setBackgroundImage("images/Mower.png");
     }
 
     // Método para eliminar la planta
@@ -160,7 +160,7 @@ public class GameCell extends JButton {
     public void addZombie(String zombieType) {
         switch (zombieType) {
             case "ZombieBasic":
-                setBackgroundImage("images/zombieBasic.png");
+                setBackgroundImage("images/ZombieBasic.png");
                 break;
             case "ConeheadZombie":
                 setBackgroundImage("images/ConeheadZombie.png");
@@ -176,5 +176,6 @@ public class GameCell extends JButton {
         }
         repaint(); // Redibujar la celda para mostrar el zombie
     }
+
 
 }

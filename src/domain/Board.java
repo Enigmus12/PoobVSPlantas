@@ -202,10 +202,10 @@ public class Board {
 
         // Crear la planta según el tipo
         switch (plantType) {
-            case "Sunflower":
+            case "SunFlower":
                 plant = new Sunflower(row,column);
                 break;
-            case "Peashooter":
+            case "PeasShooter":
                 plant = new Peashooter(row,column);
                 break;
             case "WallNut":
@@ -214,7 +214,7 @@ public class Board {
             case "PotatoMine":
                 plant = new PotatoMine(row,column);
                 break;
-            case "eciPlant":
+            case "EciPlant":
                 plant = new EciPlant(row,column);
                 break;
             default:

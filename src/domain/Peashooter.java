@@ -6,7 +6,7 @@ public class Peashooter extends Plant implements IAttacker {
     
     public Peashooter(int row, int col) {
         this.health = 100;
-        this.sunCost = 300;
+        this.sunCost = 100;
         this.shootSpeed = 1.5;
         this.projectileDamage = 20;
         this.positionX = row;

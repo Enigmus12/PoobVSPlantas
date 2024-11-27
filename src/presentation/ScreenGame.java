@@ -20,7 +20,6 @@ public class ScreenGame extends JFrame {
     private GameCell[][] cells;
     private int remainingTime; // Tiempo restante en segundos
     private JLabel timerLabel; // Para mostrar el tiempo restante
-
     private Shovel shovel;
     private boolean shovelMode;
 
@@ -35,6 +34,7 @@ public class ScreenGame extends JFrame {
         prepareActions();
         game();
     }
+
 
     private void prepareElements() {
         setTitle("Poob vs Zombies");
@@ -101,7 +101,7 @@ public class ScreenGame extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this,
                 "Seleccione una planta primero o use la pala.",
-                "Sin selección", 
+                "Sin selección",
                 JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -112,8 +112,17 @@ public class ScreenGame extends JFrame {
         JPanel header = new JPanel(new BorderLayout());
         header.setPreferredSize(new Dimension(10, 120));
         header.setBackground(Color.GRAY);
-    
-        // Panel para el contador de soles con imagen de fondo
+
+        // Agregar paneles al header
+        header.add(createSunPanel(), BorderLayout.WEST);
+        header.add(createTimerPanel(), BorderLayout.EAST);
+        header.add(createBackgroundPanel(), BorderLayout.CENTER);
+        header.add(createShovelButton(), BorderLayout.EAST);
+
+        return header;
+    }
+
+    private JPanel createSunPanel() {
         JPanel sunPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -125,23 +134,30 @@ public class ScreenGame extends JFrame {
 
         sunPanel.setPreferredSize(new Dimension(100, 50));
         sunPanel.setOpaque(false);
-    
+
         // Contador de soles
         sunsLabel = new JLabel("Soles: " + board.getSuns());
+        sunsLabel.setBounds(10,300,100,50);
         sunsLabel.setForeground(Color.YELLOW);
         sunsLabel.setFont(new Font("Arial", Font.BOLD, 14));
         sunPanel.add(sunsLabel);
+
+        return sunPanel;
+    }
+
+    private JPanel createTimerPanel() {
         JPanel timerPanel = new JPanel();
         timerPanel.setOpaque(false);
+
         timerLabel = new JLabel(formatTime(remainingTime)); // Inicializar etiqueta del temporizador
         timerLabel.setForeground(Color.WHITE);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 16));
         timerPanel.add(timerLabel);
-    
-        // Agregar el panel del sol al lado izquierdo
-        header.add(sunPanel, BorderLayout.WEST);
-        header.add(timerPanel, BorderLayout.EAST);
-        // Panel de fondo con botones
+
+        return timerPanel;
+    }
+
+    private JPanel createBackgroundPanel() {
         JPanel backgroundPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -150,32 +166,27 @@ public class ScreenGame extends JFrame {
                 g.drawImage(background.getImage(), 0, 0, getWidth(), getHeight(), this);
             }
         };
+
         backgroundPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         backgroundPanel.setOpaque(false);
-    
-        // Botones de las plantas
-        JButton sunflowerButton = createPlantButton("Sunflower", "images/cartaSunFlower.jpg","images/SunflowerCursor.png");
-        JButton peashooterButton = createPlantButton("Peashooter", "images/cartaPeasShooter.jpg","images/PeashooterCursor.png");
-        JButton walnutButton = createPlantButton("WallNut", "images/cartaWallNut.jpg","images/wallNutCursor.png");
-        JButton potatoMineButton = createPlantButton("PotatoMine", "images/cartaPotatoMine.jpg","images/PotatoMineCursor.png");
-        JButton eciPlantMineButton = createPlantButton("eciPlant", "images/cartaeciPlant.jpg","images/eciPlantCursor.png");
-    
-        // Agregar botones al panel de fondo
-        backgroundPanel.add(sunflowerButton);
-        backgroundPanel.add(peashooterButton);
-        backgroundPanel.add(walnutButton);
-        backgroundPanel.add(potatoMineButton);
-        backgroundPanel.add(eciPlantMineButton);
-    
-        // Panel para los botones al centro
-        header.add(backgroundPanel, BorderLayout.CENTER);
 
-        // Crear y agregar botón "Shovel" al lado derecho
-        JButton shovelButton = createShovelButton();
-        header.add(shovelButton, BorderLayout.EAST);
-    
-        return header;
+        // Botones de las plantas
+        String[][] plantData = {
+                {"SunFlower", "images/cartaSunFlower.jpg", "images/SunFlowerCursor.png"},
+                {"PeasShooter", "images/cartaPeasShooter.jpg", "images/PeasShooterCursor.png"},
+                {"WallNut", "images/cartaWallNut.jpg", "images/WallNutCursor.png"},
+                {"PotatoMine", "images/cartaPotatoMine.jpg", "images/PotatoMineCursor.png"},
+                {"EciPlant", "images/cartaEciPlant.jpg", "images/EciPlantCursor.png"}
+        };
+
+        for (String[] data : plantData) {
+            JButton plantButton = createPlantButton(data[0], data[1], data[2]);
+            backgroundPanel.add(plantButton);
+        }
+
+        return backgroundPanel;
     }
+
 
     private JButton createShovelButton() {
         JButton shovelButton = new JButton();
@@ -183,28 +194,28 @@ public class ScreenGame extends JFrame {
         shovelButton.setBorderPainted(false);
         shovelButton.setContentAreaFilled(false);
 
-        ImageIcon icon = new ImageIcon("images/shovel.png");
+        ImageIcon icon = new ImageIcon("images/Shovel.png");
         Image scaledImage = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
         shovelButton.setIcon(new ImageIcon(scaledImage));
         shovelButton.setPreferredSize(new Dimension(90, 110));
-    
+
         shovelButton.addActionListener(e -> {
             shovelMode = true;
             selectedPlant = null;
-        
+
             // Con esto cambiamos el mouse a una imagen personalizada
             Toolkit toolkit = Toolkit.getDefaultToolkit();
-            Image shovelImage = toolkit.getImage("images/shovelCursor.png");
+            Image shovelImage = toolkit.getImage("images/ShovelCursor.png");
             Cursor customCursor = toolkit.createCustomCursor(
-                shovelImage, 
+                shovelImage,
                 new Point(0, 0), // Punto activo del cursor
                 "ShovelCursor"
             );
             setCursor(customCursor); // Establecer el cursor personalizado
-        
+
         });
-        
-    
+
+
         return shovelButton;
     }
 
@@ -290,7 +301,7 @@ public class ScreenGame extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                ImageIcon backgroundImage = new ImageIcon("images/tablero.jpg");
+                ImageIcon backgroundImage = new ImageIcon("images/Tablero.jpg");
                 g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
             }
         };
