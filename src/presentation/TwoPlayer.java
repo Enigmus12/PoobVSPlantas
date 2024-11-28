@@ -88,7 +88,7 @@ play.addActionListener(e -> {
 
     try {
         board.validateNameTwoPlayers(name1, name2); // Validar nombre del jugador 1
-        mainApp.showScreenGame();
+        mainApp.showScreenGame("TwoPlayer");
     } catch (PoobVSZombiesExeption exception) {
         JOptionPane.showMessageDialog(this, exception.getMessage(),
                                       "Error de Validación", JOptionPane.WARNING_MESSAGE);

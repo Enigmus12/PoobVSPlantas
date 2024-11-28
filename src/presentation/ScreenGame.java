@@ -22,9 +22,9 @@ public class ScreenGame extends JFrame {
     private JLabel timerLabel; // Para mostrar el tiempo restante
     private Shovel shovel;
     private boolean shovelMode;
+    private String gameMode;
 
-
-    public ScreenGame(MainApp app) {
+    public ScreenGame(MainApp app,String modeGame ) {
         this.app = app; // Recibir referencia de MainApp
         this.board = Board.getBoard(); // Obtener instancia del tablero
         this.cells = new GameCell[ROWS][COLS]; // Inicializar matriz de celdas
@@ -45,10 +45,11 @@ public class ScreenGame extends JFrame {
         remainingTime = 10 * 60;
 
         // Crear paneles
+        JPanel centerPanel = createGameBoard();
         JPanel header = createHeader();
         JPanel leftPanel = createLeftGridPanel();
         JPanel rightPanel = createRightPanel();
-        JPanel centerPanel = createGameBoard();
+
 
         // Agregar paneles
         add(header, BorderLayout.NORTH);
@@ -61,7 +62,7 @@ public class ScreenGame extends JFrame {
             updateSunsCounter(); // Actualiza los soles
             updateTimer();       // Actualiza el temporizador
         });
-        gameTimer.start(); // Arranca el temporizador
+        gameTimer.start();
     }
 
     public void prepareActions() {

@@ -102,7 +102,7 @@ public class OnePlayer extends JFrame {
 
             try {
                 board.validateNameOnePlayer(name);
-                mainApp.showScreenGame();
+                mainApp.showScreenGame("OnePlayer");
 
 
             } catch (PoobVSZombiesExeption exception) {

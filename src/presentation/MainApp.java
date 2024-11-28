@@ -72,8 +72,8 @@ public class MainApp {
         mostrarVentana(twoPlayer);
     }
 
-    public void showScreenGame() {
-        ScreenGame screenGame = new ScreenGame(this);
+    public void showScreenGame(String mode ){
+        ScreenGame screenGame = new ScreenGame(this,mode);
         screenGame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mostrarVentana(screenGame);
     }

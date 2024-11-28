@@ -113,7 +113,7 @@ public class MainMenu extends JFrame {
 
         // Acción del botón "Machine VS Machine"
         machineVsMachine.addActionListener(e ->{
-            mainApp.showScreenGame();
+            mainApp.showScreenGame("Machines");
             mainApp.setGameMode("Machine vs Machine");
         }
         );
