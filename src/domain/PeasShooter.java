@@ -1,10 +1,10 @@
 package domain;
 
-public class Peashooter extends Plant implements IAttacker {
+public class PeasShooter extends Plant implements IAttacker {
     private double shootSpeed;
     private int projectileDamage;
     
-    public Peashooter(int row, int col) {
+    public PeasShooter(int row, int col) {
         this.health = 100;
         this.sunCost = 100;
         this.shootSpeed = 1.5;

@@ -2,7 +2,6 @@ package domain;
 
 import java.util.ArrayList;
 import javax.swing.Timer;
-import java.awt.Point;
 import java.util.HashMap;
 
 public class Board {
@@ -10,114 +9,69 @@ public class Board {
     private Cell[][] cells;
     private ArrayList<Character> activeCharacters;
     private int suns;
-    private int rows=5;
-    private int cols=10;
+    private static final int ROWS = 5;
+    private static final int COLS = 10;
     private Timer gameTimer;
-    private static final int TIMER_DELAY = 100; 
+    private Timer sunGenerationTimer;
     private String namePlayerOne;
     private String namePlayerTwo;
     private ZombiesOriginal zombieOriginal;
 
     private static Board boardSingleton;
 
-    /**
-     * Factory method to get the canvas singleton object.
-     */
-    public static Board getBoard(){
-        if(boardSingleton == null) {
+    // Singleton para obtener la instancia de Board
+    public static Board getBoard() {
+        if (boardSingleton == null) {
             boardSingleton = new Board();
         }
-
         return boardSingleton;
     }
 
-
-    // Nueva instancia de Timer para los soles
-    private Timer sunGenerationTimer;
-
+    // Inicializa la generación de soles cada 10 segundos
     private void initializeSunGenerationTimer() {
-        sunGenerationTimer = new Timer(10 * 1000, e -> {
-            generateSuns();
-        });
-        sunGenerationTimer.start(); // Inicia el temporizador
+        sunGenerationTimer = new Timer(10 * 1000, e -> generateSuns());
+        sunGenerationTimer.start();
     }
 
-    // Modifica el constructor de `Board` para llamar al nuevo Timer
+    // Constructor de Board
     private Board() {
         namePlayerOne = "";
         namePlayerTwo = "";
-        this.cells = new Cell[rows][cols];
+        this.cells = new Cell[ROWS][COLS];
         this.activeCharacters = new ArrayList<>();
         this.suns = 0;
-        zombieOriginal = new ZombiesOriginal();
+        this.zombieOriginal = new ZombiesOriginal();
 
         // Inicializar las celdas
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        initializeCells();
+
+        // Inicializar timers
+        initializeGameTimer();
+        initializeSunGenerationTimer();
+    }
+
+    // Inicializa las celdas del tablero
+    private void initializeCells() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
                 cells[i][j] = new Cell(i, j);
             }
         }
-
-        initializeGameTimer(); // Ya existente
-        initializeSunGenerationTimer(); // Llama al nuevo Timer
     }
 
-
-    /**
-     * Inicializa el timer del juego
-     */
+    // Inicializa el timer del juego
     private void initializeGameTimer() {
-        gameTimer = new Timer(TIMER_DELAY, e -> {
-
-        });
+        gameTimer = new Timer(100, e -> updateGameState());
         gameTimer.start();
     }
-    
 
-    
-    /**
-     * Intenta colocar una planta en una posición específica.
-     * @param plant planta a colocar
-     * @param row fila
-     * @param column columna
-     * @return true si se pudo colocar la planta.
-     */
-    public boolean placePlant(Plant plant, int row, int column) throws PoobVSZombiesExeption {
-        if (row < 0 || row >= rows || column < 0 || column >= cols) {
-            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
-        }
-    
-        Cell cell = cells[row][column];
-    
-        if (cell.isOccupied()) {
-            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_OCUPATED);
-        }
-    
-        if (!plant.canBePlanted(row, column)) {
-            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
-        }
-    
-        if (suns < plant.getSunCost()) {
-            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INSUFFICIENT_SUNS);
-        }
-    
-        // Colocamos la planta en la celda.
-        cell.setOccupant(plant);
-        plant.updatePosition(row, column); // Actualizamos la posición de la planta.
-        activeCharacters.add(plant);      // Añadimos la planta a los personajes activos.
-    
-        suns -= plant.getSunCost();       // Reducimos el costo en soles.
-        return true;
-    }
-
+    // Actualiza el estado del juego
     public void updateGameState() {
         // Generar soles periódicamente
         generateSuns();
 
         // Actualizar las plantas
         updatePlants();
-
-
 
         // Verificar colisiones entre zombies y plantas
         checkCollisions();
@@ -126,57 +80,39 @@ public class Board {
         removeDeadCharacters();
     }
 
-
-
-
-
-    /**
-     * Actualiza el estado de todas las plantas
-     */
+    // Actualiza las plantas
     private void updatePlants() {
         for (Character character : activeCharacters) {
             if (character instanceof Plant) {
                 Plant plant = (Plant) character;
-
-                if (plant instanceof Sunflower) {
-                    Sunflower sunflower = (Sunflower) plant;
-                    // Generar soles si corresponde
-                    suns += sunflower.generateSuns();
-                }
-
-                if (plant instanceof Peashooter) {
-                    Peashooter peaShooter = (Peashooter) plant;
-                    peaShooter.attack();
+                if (plant instanceof SunFlower) {
+                    suns += ((SunFlower) plant).generateSuns();
+                } else if (plant instanceof PeasShooter) {
+                    ((PeasShooter) plant).attack();
                 }
             }
         }
     }
 
-
-    /**
-     * Revisa y elimina los personajes muertos.
-     */
+    // Elimina los personajes muertos
     private void removeDeadCharacters() {
         activeCharacters.removeIf(character -> {
             if (!character.isAlive()) {
                 cells[character.getPositionX()][character.getPositionY()].clear();
-                return true; // Elimina el personaje de la lista.
+                return true;  // Elimina el personaje de la lista.
             }
-            return false; // Mantén el personaje en la lista.
+            return false;  // Mantén el personaje en la lista.
         });
     }
 
-    
-    /**
-        * Verifica las colisiones entre personajes
-    */
+    // Verifica las colisiones entre zombies y plantas
     private void checkCollisions() {
         for (Character character : activeCharacters) {
             if (character instanceof Zombie) {
                 Zombie zombie = (Zombie) character;
                 int row = zombie.getPositionX();
                 int col = zombie.getPositionY();
-                
+
                 // Verificar si hay una planta en la misma posición
                 if (col >= 0 && cells[row][col].isOccupied()) {
                     Character occupant = cells[row][col].getOccupant();
@@ -188,9 +124,9 @@ public class Board {
             }
         }
     }
+
+    // Añade una planta al tablero
     public Plant addPlant(String plantType, int row, int column) throws PoobVSZombiesExeption {
-
-
         Cell cell = cells[row][column];
 
         // Verifica si la celda está ocupada
@@ -198,27 +134,9 @@ public class Board {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_OCUPATED);
         }
 
-        Plant plant;
-
-        // Crear la planta según el tipo
-        switch (plantType) {
-            case "SunFlower":
-                plant = new Sunflower(row,column);
-                break;
-            case "PeasShooter":
-                plant = new Peashooter(row,column);
-                break;
-            case "WallNut":
-                plant = new WallNut(row,column);
-                break;
-            case "PotatoMine":
-                plant = new PotatoMine(row,column);
-                break;
-            case "EciPlant":
-                plant = new EciPlant(row,column);
-                break;
-            default:
-                throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_PLANT + plantType);
+        Plant plant = createPlant(plantType, row, column);
+        if (plant == null) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_PLANT + plantType);
         }
 
         // Verifica si la planta puede ser plantada y si hay suficientes soles
@@ -231,46 +149,62 @@ public class Board {
 
         // Coloca la planta en la celda
         cell.setOccupant(plant);
-        plant.updatePosition(row, column); // Actualiza la posición de la planta
-        activeCharacters.add(plant);      // Añade la planta a los personajes activos
+        plant.updatePosition(row, column);  // Actualiza la posición de la planta
+        activeCharacters.add(plant);        // Añade la planta a los personajes activos
+        suns -= plant.getSunCost();         // Reduce el costo en soles
 
-        suns -= plant.getSunCost();       // Reduce el costo en soles
-        return plant;                     // Retorna la planta creada
+        return plant;  // Retorna la planta creada
     }
-    /**
-        * Genera soles periódicamente en el juego
-        */
+
+    // Crea la planta según el tipo proporcionado
+    private Plant createPlant(String plantType, int row, int column) {
+        switch (plantType) {
+            case "SunFlower":
+                return new SunFlower(row, column);
+            case "PeasShooter":
+                return new PeasShooter(row, column);
+            case "WallNut":
+                return new WallNut(row, column);
+            case "PotatoMine":
+                return new PotatoMine(row, column);
+            case "EciPlant":
+                return new EciPlant(row, column);
+            default:
+                return null;  // Planta no válida
+        }
+    }
+
+    // Genera soles periódicamente
     public void generateSuns() {
-        suns += 25; // Incrementa la cantidad de soles en 25
+        suns += 25;  // Incrementa la cantidad de soles en 25
     }
 
 
-    public int getRows() { return rows; }
-    public int getCols() { return cols; }
     public int getSuns() { return suns; }
     public Cell getCell(int row, int col) { return cells[row][col]; }
     public ArrayList<Character> getActiveCharacters() { return activeCharacters; }
 
-
+    // Validación de nombres de jugadores
     public void validateNameOnePlayer(String name) throws PoobVSZombiesExeption {
-        if (name == null || name.trim().isEmpty() || name.equals("Enter your name here") ) {
+        if (name == null || name.trim().isEmpty() || name.equals("Enter your name here")) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_NAME);
         }
-        namePlayerOne=name;
+        namePlayerOne = name;
     }
 
     public void validateNameTwoPlayers(String name1, String name2) throws PoobVSZombiesExeption {
-        if (name1 == null || name1.trim().isEmpty()  ) {
-            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_NAME + " para player one" );
+        if (name1 == null || name1.trim().isEmpty()) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_NAME + " para player one");
         }
-        if (name2 == null || name2.trim().isEmpty() ) {
-            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_NAME + " para player one" );
+        if (name2 == null || name2.trim().isEmpty()) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_NAME + " para player two");
         }
-        namePlayerOne=name1;
-        namePlayerTwo=name2;
-    }
-    public HashMap<String,int[]> gameOnePlayer(){
-        return zombieOriginal.attack();
+        namePlayerOne = name1;
+        namePlayerTwo = name2;
     }
 
+    // Método para realizar la logica del ZombieOriginal
+    public HashMap<String, int[]> gameOnePlayer() {
+        return zombieOriginal.attack();
+    }
 }
