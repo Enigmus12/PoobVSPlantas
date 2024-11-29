@@ -1,10 +1,7 @@
 package presentation;
 
 import domain.Board;
-import domain.Plant;
 import domain.PoobVSZombiesExeption;
-import domain.Shovel;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
@@ -20,7 +17,6 @@ public class ScreenGame extends JFrame {
     private GameCell[][] cells;
     private int remainingTime; // Tiempo restante en segundos
     private JLabel timerLabel; // Para mostrar el tiempo restante
-    private Shovel shovel;
     private boolean shovelMode;
     private String gameMode;
 
@@ -28,7 +24,6 @@ public class ScreenGame extends JFrame {
         this.app = app; // Recibir referencia de MainApp
         this.board = Board.getBoard(); // Obtener instancia del tablero
         this.cells = new GameCell[ROWS][COLS]; // Inicializar matriz de celdas
-        this.shovel = new Shovel();
         this.shovelMode = false;
         prepareElements();
         prepareActions();
@@ -82,7 +77,7 @@ public class ScreenGame extends JFrame {
     private void handleCellClick(GameCell cell) {
         if (shovelMode) {
             try {
-                shovel.removePlant(cell.getRow(), cell.getColumn());
+                board.shovel(cell.getRow(), cell.getColumn());
                 cell.removePlant();
                 shovelMode = false; // Desactivar modo pala después de usar
                 setCursor(Cursor.getDefaultCursor()); // Restaurar cursor
@@ -91,7 +86,7 @@ public class ScreenGame extends JFrame {
             }
         } else if (selectedPlant != null) {
             try {
-                Plant plant = board.addPlant(selectedPlant, cell.getRow(), cell.getColumn());
+                board.addPlant(selectedPlant, cell.getRow(), cell.getColumn());
                 cell.addPlant(selectedPlant);
                 cell.repaint();
                 updateSunsCounter();

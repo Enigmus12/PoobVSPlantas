@@ -6,21 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import domain.Character;
-import domain.Plant;
-import domain.Zombie;
 
 public class GameCell extends JButton {
     private GameCell previous; // Referencia al nodo anterior
     private GameCell next;     // Referencia al nodo siguiente
     private int row;
     private int column;
-    private List<Plant> plants;  // Plantas en la celda
-    private List<Zombie> zombies; // Zombis en la celda
-    private List<Plant> peas;// Guisantes en la celda
+    private ArrayList<String> ocupants;  // Objetos en la celda
     private List<ImageIcon> overlayImages; // Lista de imágenes superpuestas
     private ImageIcon backgroundImage; // Imagen de fondo (planta o decoración)
-
     private String currentPlantType; // tipo de planta actual
 
     public GameCell(int row, int column) {
@@ -29,9 +23,7 @@ public class GameCell extends JButton {
         next = null;
         this.row = row;
         this.column = column;
-        plants = new ArrayList<>();
-        zombies = new ArrayList<>();
-        peas = new ArrayList<>();
+        currentPlantType = null;
         setContentAreaFilled(false); // Hacer el botón transparente para gestionar el dibujo personalizado
     }
 
@@ -60,49 +52,9 @@ public class GameCell extends JButton {
         return next;
     }
 
-    // Métodos para gestionar plantas
-    public void addPlant(Plant plant) {
-        plants.add(plant);
-    }
-
-    public void removePlant(Plant plant) {
-        plants.remove(plant);
-    }
-
-    public List<Plant> getPlants() {
-        return plants;
-    }
-
-    // Métodos para gestionar zombis
-    public void addZombie(Zombie zombie) {
-        zombies.add(zombie);
-    }
-
-    public void removeZombie(Character zombie) {
-        zombies.remove(zombie);
-    }
-
-    public List<Zombie> getZombies() {
-        return zombies;
-    }
-
-    // Métodos para gestionar guisantes
-    public void addPea(Plant pea) {
-        peas.add(pea);
-    }
-
-    public void removePea(Plant pea) {
-        peas.remove(pea);
-    }
-
-    public List<Plant> getPeas() {
-        return peas;
-    }
-
 
     public void addPlant(String plantType) {
         this.currentPlantType = plantType; // Save the current plant type
-
         // Map plant types to their respective image paths
         Map<String, String> plantImages = Map.of(
                 "SunFlower", "images/SunFlower.png",
@@ -122,12 +74,12 @@ public class GameCell extends JButton {
 
     // Método para eliminar la planta
     public void removePlant() {
-        if (!plants.isEmpty()) {
-            plants.clear(); // Limpiar la lista de plantas
+        if (currentPlantType != null) {
+            this.currentPlantType = null; // Limpiar el tipo de planta actual
+            this.backgroundImage = null; // Eliminar la imagen de fondo
+            repaint(); // Redibujar la celda; // Limpiar la lista de plantas
         }
-        this.currentPlantType = null; // Limpiar el tipo de planta actual
-        this.backgroundImage = null; // Eliminar la imagen de fondo
-        repaint(); // Redibujar la celda
+
     }
 
     // Establecer la imagen de fondo

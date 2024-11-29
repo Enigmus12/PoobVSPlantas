@@ -80,6 +80,14 @@ public class Board {
         removeDeadCharacters();
     }
 
+    public static int getROWS() {
+        return ROWS;
+    }
+
+    public static int getCOLS() {
+        return COLS;
+    }
+
     // Actualiza las plantas
     private void updatePlants() {
         for (Character character : activeCharacters) {
@@ -207,4 +215,25 @@ public class Board {
     public HashMap<String, int[]> gameOnePlayer() {
         return zombieOriginal.attack();
     }
-}
+
+    public void shovel(int row,int column) throws PoobVSZombiesExeption{
+        // Verificar si la posición es válida
+        if (row < 0 || row >= getROWS() || column < 0 || column >= getCOLS()) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
+        }
+
+        // Obtener la celda
+        Cell cell = getCell(row, column);
+
+        // Verificar si la celda está ocupada por una planta
+        if (!cell.isOccupied() || !(cell.getOccupant() instanceof Plant)) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_EMPTY);
+        }
+
+        // Eliminar la planta de la celda y de los personajes activos
+        Plant plant = (Plant) cell.getOccupant();
+        getActiveCharacters().remove(plant);
+        cell.clear();
+    }
+    }
+

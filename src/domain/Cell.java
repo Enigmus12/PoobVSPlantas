@@ -7,6 +7,8 @@ public class Cell {
     private Character occupant;
     private Point position;
     private boolean isOccupied;
+    private int row;
+    private int column;
     
     /**
      * Constructor de la celda
@@ -17,8 +19,18 @@ public class Cell {
         this.position = new Point(row, col);
         this.isOccupied = false;
         this.occupant = null;
+        this.column=col;
+        this.row=row;
     }
-    
+
+    public int getColumn() {
+        return column;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
     public Character getOccupant() { return occupant; }
     public Point getPosition() { return position; }
     public boolean isOccupied() { return isOccupied; }
