@@ -57,6 +57,9 @@ public class GameCell extends JButton {
     // Method to add a plant
     public void addPlant(String plantType) {
         this.currentPlantType = plantType; // Save the current plant type
+        if(plantType.equals("PeasShooter")){
+            System.out.println("disparo");
+        }
         // Map plant types to their respective image paths
         Map<String, String> plantImages = Map.of(
                 "SunFlower", "images/SunFlower.png",
