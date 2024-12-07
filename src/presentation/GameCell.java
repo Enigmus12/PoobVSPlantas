@@ -2,12 +2,14 @@ package presentation;
 
 import domain.Board;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.Map;
 import javax.swing.*;
 
 public class GameCell extends JButton {
     private GameCell previous; // Reference to the previous node
     private GameCell next;     // Reference to the next node
+    private ImageIcon overlayImage;  // Imagen de sobreposición
     private int row;
     private int column;
     private Board board;
@@ -17,6 +19,13 @@ public class GameCell extends JButton {
     private int bgX, bgY; // Background position within the cell
     private Timer moveTimer; // Timer to move the zombie image
     private Boolean occuped;
+    private ImageIcon bulletImage; // Imagen de la bala private int bulletX;
+
+    private boolean showBullet; // Indicador para mostrar la bala// Posición X de la bala
+    private int bulletX;
+    private int overlayX;
+    private int overlayY;
+
     public GameCell(int row, int column) {
         super();
         this.row = row;
@@ -59,6 +68,7 @@ public class GameCell extends JButton {
         this.currentPlantType = plantType; // Save the current plant type
         if(plantType.equals("PeasShooter")){
             System.out.println("disparo");
+            iniciarD();
         }
         // Map plant types to their respective image paths
         Map<String, String> plantImages = Map.of(
@@ -68,7 +78,7 @@ public class GameCell extends JButton {
                 "PotatoMine", "images/PotatoMine.png",
                 "EciPlant", "images/EciPlant.png"
         );
-        
+
         // Set the background image of the plant
         backgroundImage = new ImageIcon(plantImages.getOrDefault(plantType, null));
         repaint(); // Redraw the cell with the new background image (plant)
@@ -78,6 +88,7 @@ public class GameCell extends JButton {
     // Method to add a zombie and start its movement
     public void addZombie(String zombieType) {
         this.currentZombieType = zombieType;
+
         // Map zombie types to their respective image paths
         Map<String, String> zombieImages = Map.of(
                 "ZombieBasic", "images/ZombieBasic.png",
@@ -85,7 +96,7 @@ public class GameCell extends JButton {
                 "BucketheadZombie", "images/BucketheadZombie.png",
                 "FlagZombie", "images/FlagZombie.png"
         );
-        
+
         // Set the background image of the zombie
         backgroundImage = new ImageIcon(zombieImages.getOrDefault(zombieType, null));
         bgX = getWidth(); // Start the zombie at the right edge
@@ -102,7 +113,7 @@ public class GameCell extends JButton {
                 if (bgX < -getWidth()) {
                     if (previous != null) {
                         previous.receive(currentZombieType);
-                        
+
                     }
                     moveTimer.stop(); // Stop the timer when the zombie moves out of the cell
                 }
@@ -117,24 +128,30 @@ public class GameCell extends JButton {
     // Method to receive a zombie or plant
     public void receive(String type) {
         if (isOccuped()){
-            
+
             System.out.println("colision");
         }else{
             addZombie(type);
         }
     }
 
-    // Redraw the component (the cell)
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        // Draw the background image (plant or zombie) if it exists
+        // Dibujar la imagen de fondo si existe
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage.getImage(), bgX, bgY, getWidth(), getHeight(), this);
         }
+
+        // Dibujar la imagen de sobreposición si existe
+        if (overlayImage != null) {
+
+            g2d.drawImage(overlayImage.getImage(), overlayX, overlayY, getWidth(), getHeight(), this);
+        }
     }
+
 
     // Method to remove the plant or zombie (clear everything)
     public void removeBackground() {
@@ -165,5 +182,20 @@ public class GameCell extends JButton {
             this.backgroundImage = null; // Remove the background image
             repaint(); // Redraw the cell
         }
+
     }
+    private void iniciarD(){
+        setOverlayImage("images/Pea.png");
+    }
+    public void setOverlayImage(String imagePath) {
+        if (imagePath != null) {
+            this.overlayImage = new ImageIcon(imagePath);
+        } else {
+            this.overlayImage = null;
+        }
+        repaint(); // Redibujar la celda
+    }
+
 }
+
+

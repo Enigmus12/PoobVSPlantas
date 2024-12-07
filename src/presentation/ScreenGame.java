@@ -73,6 +73,7 @@ public class ScreenGame extends JFrame {
     }
 
 
+
     // acciones que deben realizarse cuando el usuario hace clic en una celda
     private void handleCellClick(GameCell cell) {
         if (shovelMode) {
