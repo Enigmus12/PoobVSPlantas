@@ -1,21 +1,23 @@
 package domain;
 
 public abstract class Zombie extends Character {
-    protected float speed;
+    protected int speed; // Velocidad de movimiento del zombie
+    protected int damage; // Daño base del zombie
     
-    /**
-     * Nos sirve para que el zombie avance en el tablero
-     */
-    public abstract void advance();
-    
-    /**
-     * Realiza el ataque del zombie
-     */
-    public abstract void attack();
-    
-    /**
-     * Verifica colisiones con otros elementos
-     */
-    public abstract void checkCollision();
-}
+    public Zombie(int row, int col) {
+        this.positionX = row;
+        this.positionY = col;
+        // Inicializar salud y velocidad según el tipo de zombie
+        this.damage = 10; // Daño base predeterminado
+    }
 
+    /**
+     * Método de ataque estándar para zombies
+     * @param target La planta objetivo del ataque
+     */
+    public void attack(Plant target) {
+        if (target != null) {
+            target.receiveDamage(this.damage);
+        }
+    }
+}

@@ -1,24 +1,10 @@
 package domain;
 
 public class BasicZombie extends Zombie {
-    private int damage;
-    
-    public BasicZombie() {
-        this.health = 100;
-        this.speed = 1.0f;
-        this.damage = 100;
-    }
-    
-    @Override
-    public void advance() {
-        this.positionX -= speed;
-    }
-    
-    @Override
-    public void attack() {
-    }
-    
-    @Override
-    public void checkCollision() {
+    public BasicZombie(int row, int col) {
+        super(row, col);
+        this.health = 100; // Salud inicial
+        this.speed = 1; 
+        this.damage = 10; // Daño específico para zombie básico
     }
 }

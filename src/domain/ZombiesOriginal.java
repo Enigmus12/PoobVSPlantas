@@ -25,13 +25,6 @@ public class ZombiesOriginal extends Maquina {
         // Devolver el HashMap
         return resultado;
     }
-
-
 }
-
-
-
-
-// Atributo estático para la lista de nombres de plantas
 
 

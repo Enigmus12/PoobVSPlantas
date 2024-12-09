@@ -126,58 +126,66 @@ public class GameCell extends JButton {
         occuped=true;
     }
 
-    // Método para agregar un zombie y comenzar su movimiento
+
     public void addZombie(String zombieType) {
-
-
         this.currentZombieType = zombieType;
-        System.out.println(zombieType);
-        // Mapa de tipos de zombies a sus imágenes
+        
         Map<String, String> zombieImages = Map.of(
-                "ZombieBasic", "images/ZombieBasic.png",
-                "ConeheadZombie", "images/ConeheadZombie.png",
-                "BucketheadZombie", "images/BucketheadZombie.png",
-                "FlagZombie", "images/FlagZombie.png"
+            "ZombieBasic", "images/ZombieBasic.png"
         );
-
-        // Verificar si el tipo de zombie está presente en el mapa
-        if (zombieImages.containsKey(zombieType)) {
-            backgroundImage = new ImageIcon(zombieImages.get(zombieType));
-        } else {
-            System.out.println("Zombie no encontrado: " + zombieType);
-            return;
-        }
-
-        bgX = getWidth();
-
-
-        initMoveTimerZombie();
+    
+        // Establecer la imagen de fondo del zombie
+        backgroundImage = new ImageIcon(zombieImages.getOrDefault(zombieType, "images/ZombieBasic.png"));
+        
+        // Inicializar el movimiento del zombie
+        initializeZombieMovement();
+        
+        occuped = true;
         repaint();
     }
-
-
-    // Method to initialize the timer that moves the zombie image
-    private void initMoveTimerZombie() {
+    
+    private void initializeZombieMovement() {
+        // Crear un temporizador para mover el zombie
         moveTimer = new Timer(100, e -> {
-            if (backgroundImage != null) {
-                bgX -= 2; // Move the background 2 pixels to the left (for the zombie)
-                if (bgX < -getWidth()) {
-                    if (previous != null) {
-                        send(false,"Zombie",currentZombieType);
-                    }
-                    moveTimer.stop(); // Stop the timer when the zombie moves out of the cell
-                }
+            // Mover el zombie hacia la izquierda
+            bgX -= 1; // Ajustar la velocidad 
+            
+            // Verificar si el zombie ha salido completamente de la celda
+            if (bgX < -getWidth()) {
+                // Detener el temporizador
+                ((Timer)e.getSource()).stop();
+                
+                // Intentar mover el zombie a la celda anterior
+                send(false, "Zombie", currentZombieType);
+                
+                // Limpiar esta celda
+                currentZombieType = null;
+                backgroundImage = null;
+                occuped = false;
+                bgX = 0;
             }
-            repaint(); // Redraw the cell with the new background position (zombie)
+            
+            repaint();
         });
-        moveTimer.start(); // Start the zombie timer
+        
+        // Iniciar el temporizador de movimiento
+        moveTimer.start();
     }
+
+
     public boolean isOccuped(){return occuped;}
 
     // Método para recibir un zombie o planta
     // Método para recibir un zombie o planta
+
     public void receive(String type, String typeCharacter) {
-        if ("Pea".equals(type)) {
+        if ("Zombie".equals(type)) {
+            if (!isOccuped()) {
+                addZombie(typeCharacter);
+            } else {
+                System.out.println("Cell occupied, cannot receive zombie");
+            }
+        } else if ("Pea".equals(type)) {
             // Si la celda está ocupada pero no por un zombie, la "pea" pasa
             if (isOccuped()) {
                 if (currentZombieType != null) {
@@ -188,23 +196,10 @@ public class GameCell extends JButton {
                     // Si hay una planta pero no un zombie, la "pea" pasa
                     System.out.println("La 'pea' pasa por encima de la planta.");
                     // Aquí podemos iniciar el movimiento de la "pea" o cualquier lógica adicional
-                }
-            } else {
-                // Si la celda no está ocupada, la "pea" puede ser añadida
-                System.out.println("La 'pea' pasa por una celda vacía.");
-                // Lógica para añadir la "pea"
             }
-        } else {
-            // Si el tipo es Zombie o Plant
-            if ("Zombie".equals(type)) {
-                // Si es un zombie, se agrega un zombie
-                addZombie(typeCharacter);
-            } else if ("Plant".equals(type)) {
-                // Si es una planta, se agrega una planta
-                addPlant(typeCharacter);
-            }
-        }
+        } }
     }
+
 
     // Método para enviar un zombie o planta
     private void send(Boolean direction, String type, String typeCharacter) {
@@ -234,15 +229,14 @@ public class GameCell extends JButton {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-
+    
         // Dibujar la imagen de fondo si existe
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage.getImage(), bgX, bgY, getWidth(), getHeight(), this);
         }
-
+    
         // Dibujar la imagen de sobreposición si existe
         if (overlayImage != null) {
-
             g2d.drawImage(overlayImage.getImage(), overlayX, overlayY, getWidth(), getHeight(), this);
         }
     }
