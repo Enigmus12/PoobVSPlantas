@@ -20,4 +20,10 @@ public abstract class Zombie extends Character {
             target.receiveDamage(this.damage);
         }
     }
+
+    public abstract void advance();
+
+    public abstract void attack();
+
+    public abstract void checkCollision();
 }
