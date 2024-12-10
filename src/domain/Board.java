@@ -71,29 +71,35 @@ public class Board {
 
     // Añade una planta al tablero
     public void addPlant(String plantType, int row, int column) throws PoobVSZombiesExeption {
-        Character cell = characters[row][column];
+        // Verifica si las coordenadas están dentro de los límites del tablero
+        if (row < 0 || row >= ROWS || column < 0 || column >= COLS) {
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
+        }
+    
         // Verifica si la celda está ocupada
-        if (cell != null) {
+        if (characters[row][column] != null) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_OCUPATED);
         }
+    
         Plant plant = createPlant(plantType, row, column);
         if (plant == null) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_PLANT + plantType);
         }
+    
         // Verifica si la planta puede ser plantada y si hay suficientes soles
         if (!plant.canBePlanted(row, column)) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
         }
+    
         if (suns < plant.getSunCost()) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INSUFFICIENT_SUNS);
         }
-
+    
         // Coloca la planta en la celda
-        cell=plant;
+        characters[row][column] = plant;
         plant.updatePosition(row, column);  // Actualiza la posición de la planta
-
+    
         suns -= plant.getSunCost();         // Reduce el costo en soles
-
     }
 
     // Crea la planta según el tipo proporcionado
@@ -200,23 +206,22 @@ public class Board {
         return informacionZombie;
     }
 
-    public void shovel(int row,int column) throws PoobVSZombiesExeption{
+    public void shovel(int row, int column) throws PoobVSZombiesExeption {
         // Verificar si la posición es válida
         if (row < 0 || row >= getROWS() || column < 0 || column >= getCOLS()) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
         }
-
+    
         // Obtener la celda
-        Character cell =characters[row][column];
-
+        Character cell = characters[row][column];
+    
         // Verificar si la celda está ocupada por una planta
-        if (cell==null || !(cell instanceof Plant)) {
+        if (cell == null || !(cell instanceof Plant)) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_EMPTY);
         }
-
-        cell=null;
-
+    
+        // Eliminar completamente la planta de la celda
+        characters[row][column] = null;
     }
-
 }
 

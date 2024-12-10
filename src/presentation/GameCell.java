@@ -84,12 +84,19 @@ public class GameCell extends JButton {
     }
 
     public void addPlant(String plantType) {
+        // Si ya hay un zombie, no permitir agregar planta
+        if (haveZombie) {
+            System.out.println("Cannot place plant. Zombie present in cell.");
+            return;
+        }
+        
         this.currentPlantType = plantType;
         if (plantType.equals("PeasShooter")) {
             startPeaTimer();
         }
         updateBackgroundImage(PLANT_IMAGES.get(plantType));
         occuped = true;
+        repaint();
     }
 
     public void removePlant() {
@@ -139,6 +146,7 @@ public class GameCell extends JButton {
                 send("Zombie", currentZombieType);
                 removeBackground();
                 occuped = false; // Liberar la celda cuando el zombie sale
+                haveZombie = false;  // para limpiar completamente el estado del zombie
                 currentZombieType = null;
             }
             repaint();
@@ -184,11 +192,16 @@ public class GameCell extends JButton {
 
     private void sendZombie() {
         if (previous != null) {
-            if(!previous.isOccupied()) {
+            if (!previous.isOccupied()) {
                 previous.receive("Zombie", currentZombieType);
-                board.moveZombie(row,column);
+                board.moveZombie(row, column);
+                
+                // Limpiar completamente el estado actual
+                this.haveZombie = false;
+                this.currentZombieType = null;
+                this.backgroundImage = null;
             }
-            }
+        }
     }
 
     public void removeBackground() {
@@ -205,9 +218,19 @@ public class GameCell extends JButton {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+        
+        // Primero dibujar el fondo (zombie o lawnmower)
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage.getImage(), bgX, bgY, getWidth(), getHeight(), this);
         }
+        
+        // Dibujar la planta si existe
+        if (currentPlantType != null) {
+            ImageIcon plantIcon = new ImageIcon(PLANT_IMAGES.get(currentPlantType));
+            g2d.drawImage(plantIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
+        }
+        
+        // Dibujar las "peas"
         for (Pea pea : peas) {
             g2d.drawImage(new ImageIcon("images/Pea.png").getImage(), pea.x, 0, getWidth(), getHeight(), this);
         }
