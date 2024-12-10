@@ -2,11 +2,9 @@ package domain;
 
 import java.awt.Point;
 
-
 public class Cell {
     private Character occupant;
     private Point position;
-    private boolean isOccupied;
     private int row;
     private int column;
     
@@ -17,10 +15,9 @@ public class Cell {
      */
     public Cell(int row, int col) {
         this.position = new Point(row, col);
-        this.isOccupied = false;
         this.occupant = null;
-        this.column=col;
-        this.row=row;
+        this.column = col;
+        this.row = row;
     }
 
     public int getColumn() {
@@ -31,21 +28,49 @@ public class Cell {
         return row;
     }
 
-    public Character getOccupant() { return occupant; }
-    public Point getPosition() { return position; }
-    public boolean isOccupied() { return isOccupied; }
+    public Character getOccupant() { 
+        return occupant; 
+    }
+
+    public Point getPosition() { 
+        return position; 
+    }
     
     /**
-     * Coloca un personaje en la celda
+     * Verifica si la celda está ocupada
+     * @return true si hay un ocupante (planta o zombie)
+     */
+    public boolean isOccupied() { 
+        return occupant != null; 
+    }
+    
+    /**
+     * Coloca un personaje en la celda con reglas específicas
      * @param character personaje a colocar
-     * @return true si se pudo colocar, false si ya estaba ocupada
+     * @return true si se pudo colocar, false si no
      */
     public boolean setOccupant(Character character) {
-        if (!isOccupied) {
+        // Si no hay ningún ocupante, se puede colocar
+        if (occupant == null) {
             this.occupant = character;
-            this.isOccupied = true;
             return true;
         }
+        
+        // Permitir múltiples zombies en la misma fila
+        if (character instanceof Zombie && occupant instanceof Zombie) {
+            return true;
+        }
+        
+        // Permitir que un zombie ocupe una celda con una planta
+        if (character instanceof Zombie && occupant instanceof Plant) {
+            return true;
+        }
+        
+        // No permitir colocar una planta en una celda con zombie
+        if (character instanceof Plant && occupant instanceof Zombie) {
+            return false;
+        }
+        
         return false;
     }
     
@@ -54,6 +79,5 @@ public class Cell {
      */
     public void clear() {
         this.occupant = null;
-        this.isOccupied = false;
     }
 }

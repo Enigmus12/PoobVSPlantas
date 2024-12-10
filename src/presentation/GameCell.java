@@ -137,23 +137,25 @@ public class GameCell extends JButton {
                 ((Timer) e.getSource()).stop();
                 send("Zombie", currentZombieType);
                 removeBackground();
+                occuped = false; // Liberar la celda cuando el zombie sale
+                currentZombieType = null;
             }
             repaint();
         });
         moveTimer.start();
     }
 
+    public boolean isZombieExited() {
+        return currentZombieType == null;
+    }
+
     public void receive(String type, String typeCharacter) {
         if ("Zombie".equals(type)) {
-            if (!isOccupied()) {
-                addZombie(typeCharacter);
-            } else {
-                System.out.println("Cell occupied, cannot receive zombie");
-            }
-        } else if ("Pea".equals(type)) {
-            handlePea();
+            addZombie(typeCharacter); // Eliminar la verificación de ocupación
         }
+
     }
+    
 
     private void handlePea() {
         if (isOccupied() && haveZombie) {
