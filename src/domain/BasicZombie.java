@@ -8,18 +8,4 @@ public class BasicZombie extends Zombie {
         this.damage = 10; // Daño específico para zombie básico
     }
 
-    @Override
-    public void advance() {
-
-    }
-
-    @Override
-    public void attack() {
-
-    }
-
-    @Override
-    public void checkCollision() {
-
-    }
 }

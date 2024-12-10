@@ -16,16 +16,5 @@ public class ConeheadZombie extends Zombie {
         this.coneResistance = 0;
     }
     
-    @Override
-    public void advance() {
-        this.positionX -= speed;
-    }
-    
-    @Override
-    public void attack() {
-    }
-    
-    @Override
-    public void checkCollision() {
-    }
+
 }

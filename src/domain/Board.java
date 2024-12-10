@@ -146,32 +146,6 @@ public class Board {
     }
 
 
-    // método para mover zombies
-    private void moveZombies() {
-        for (Character character : activeCharacters) {
-            if (character instanceof Zombie) {
-                Zombie zombie = (Zombie) character;
-                int currentRow = zombie.getPositionX();
-                int currentCol = zombie.getPositionY();
-
-                // Verificar si puede moverse
-                if (canMoveZombie(zombie, currentRow, currentCol)) {
-                    // Liberar la celda actual
-                    cells[currentRow][currentCol].clear();
-
-                    // Mover un paso a la izquierda (hacia la columna 0)
-                    int newCol = currentCol - 1;
-                    
-                    // Actualizar la posición del zombie
-                    zombie.updatePosition(currentRow, newCol);
-                    
-                    // Ocupar la nueva celda
-                    cells[currentRow][newCol].setOccupant(zombie);
-                }
-            }
-        }
-    }
-
     // Método para verificar si un zombie puede moverse
     private boolean canMoveZombie(Zombie zombie, int row, int col) {
         // Si el zombie está en la primera columna, no puede moverse más
@@ -179,15 +153,50 @@ public class Board {
             return false;
         }
 
-        // Verificar que la columna a la izquierda esté libre
+        // Verificar que la columna a la izquierda esté libre de zombies
         Cell targetCell = cells[row][col - 1];
-        return !targetCell.isOccupied();
+        
+        // Permitir que el zombie se mueva si la celda está vacía 
+        // o solo contiene una planta
+        return !targetCell.isOccupied() || 
+            (targetCell.getOccupant() instanceof Plant);
+    }
+
+    // método para mover zombies
+    private void moveZombies() {
+        for (Character character : new ArrayList<>(activeCharacters)) {
+            if (character instanceof Zombie) {
+                Zombie zombie = (Zombie) character;
+                int currentRow = zombie.getPositionX();
+                int currentCol = zombie.getPositionY();
+    
+                // Verificar si puede moverse
+                if (canMoveZombie(zombie, currentRow, currentCol)) {
+                    // Liberar la celda actual
+                    cells[currentRow][currentCol].clear();
+    
+                    // Mover un paso a la izquierda (hacia la columna 0)
+                    int newCol = currentCol - 1;
+                    
+                    // Actualizar la posición del zombie
+                    zombie.updatePosition(currentRow, newCol);
+                    
+                    // Intentar colocar el zombie en la nueva celda
+                    cells[currentRow][newCol].setOccupant(zombie);
+                }
+            }
+        }
     }
 
 
     // Añade una planta al tablero
     public Plant addPlant(String plantType, int row, int column) throws PoobVSZombiesExeption {
         Cell cell = cells[row][column];
+
+        // Verificar si hay un zombie en la celda
+        if (cell.getOccupant() instanceof Zombie) {
+            throw new PoobVSZombiesExeption("No se puede plantar sobre un zombie");
+        }
 
         // Verifica si la celda está ocupada
         if (cell.isOccupied()) {

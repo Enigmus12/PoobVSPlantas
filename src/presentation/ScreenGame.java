@@ -91,6 +91,11 @@ public class ScreenGame extends JFrame {
                 cell.addPlant(selectedPlant);
                 cell.repaint();
                 updateSunsCounter();
+                
+                // Restablecer el cursor al cursor predeterminado
+                setCursor(Cursor.getDefaultCursor());
+                
+                // Limpiar la selección de planta
                 selectedPlant = null;
             } catch (PoobVSZombiesExeption exception) {
                 JOptionPane.showMessageDialog(this, exception.getMessage());
