@@ -1,24 +1,28 @@
 package presentation;
 
 import domain.Board;
-import java.awt.*;
-import java.util.Map;
 import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class GameCell extends JButton {
     private GameCell previous;
     private GameCell next;
-    private ImageIcon overlayImage;
     private int row;
     private int column;
     private Board board;
     private String currentPlantType;
     private String currentZombieType;
     private ImageIcon backgroundImage;
-    private int bgX, bgY, overlayX,overlayY;
+    private int bgX, bgY;
     private Timer moveTimer;
     private boolean occuped;
+    private boolean haveZombie;
     private Timer peaTimer;
+    private List<Pea> peas; // Lista para almacenar las "peas"
+
     private static final Map<String, String> PLANT_IMAGES = Map.of(
             "SunFlower", "images/SunFlower.png",
             "PeasShooter", "images/PeasShooter.png",
@@ -26,6 +30,7 @@ public class GameCell extends JButton {
             "PotatoMine", "images/PotatoMine.png",
             "EciPlant", "images/EciPlant.png"
     );
+
     private static final Map<String, String> ZOMBIE_IMAGES = Map.of(
             "ZombieBasic", "images/ZombieBasic.png"
     );
@@ -39,7 +44,9 @@ public class GameCell extends JButton {
         this.currentZombieType = null;
         this.bgX = 0;
         this.bgY = 0;
+        this.peas = new ArrayList<>();
         setContentAreaFilled(false);
+        haveZombie = false;
     }
 
     public int getRow() {
@@ -53,29 +60,26 @@ public class GameCell extends JButton {
     public boolean isOccupied() {
         return occuped;
     }
+
+    public boolean hasZombie() {
+        return haveZombie;
+    }
+
     public void setBackgroundImage(String imagePath) {
         if (imagePath != null) {
             this.backgroundImage = new ImageIcon(imagePath);
         } else {
             this.backgroundImage = null;
         }
-        repaint(); // Redraw the button with the new image
+        repaint();
     }
 
     public void setPrevious(GameCell previous) {
         this.previous = previous;
     }
 
-    public GameCell getPrevious() {
-        return previous;
-    }
-
     public void setNext(GameCell next) {
         this.next = next;
-    }
-
-    public GameCell getNext() {
-        return next;
     }
 
     public void addPlant(String plantType) {
@@ -87,11 +91,23 @@ public class GameCell extends JButton {
         occuped = true;
     }
 
+    public void removePlant() {
+        if (currentPlantType != null) {
+            if (peaTimer != null) {
+                peaTimer.stop();
+            }
+            this.currentPlantType = null;
+            this.backgroundImage = null;
+            repaint();
+        }
+    }
+
     public void addZombie(String zombieType) {
         this.currentZombieType = zombieType;
         updateBackgroundImage(ZOMBIE_IMAGES.getOrDefault(zombieType, ZOMBIE_IMAGES.get("ZombieBasic")));
         initializeZombieMovement();
         occuped = true;
+        haveZombie = true;
     }
 
     private void updateBackgroundImage(String imagePath) {
@@ -104,32 +120,14 @@ public class GameCell extends JButton {
     }
 
     private void startPeaTimer() {
-        peaTimer = new Timer(10000, e -> addPea());
+        peaTimer = new Timer(5000, e -> addPea());
         peaTimer.start();
     }
 
     private void addPea() {
-        setOverlayImage("images/Pea.png");
-        if (bgX == 0) {
-            overlayX -= getHeight() / 2;
-        } else {
-            overlayX = bgX;
-            overlayY = bgY;
-        }
-        movePea();
-    }
-
-    private void movePea() {
-        Timer movePeaTimer = new Timer(100, e -> {
-            overlayX += 5;
-            if (overlayX > getWidth()) {
-                send("Pea", "Pea");
-                ((Timer) e.getSource()).stop();
-                setOverlayImage(null);
-            }
-            repaint();
-        });
-        movePeaTimer.start();
+        Pea newPea = new Pea(0, getHeight() / 2 - 10);
+        peas.add(newPea);
+        newPea.startMovement();
     }
 
     private void initializeZombieMovement() {
@@ -158,12 +156,9 @@ public class GameCell extends JButton {
     }
 
     private void handlePea() {
-        if (isOccupied()) {
-            if (currentZombieType != null) {
-                System.out.println("The 'Pea' cannot pass, there is a zombie.");
-            } else {
-                System.out.println("The 'Pea' passes over the plant.");
-            }
+        if (isOccupied() && haveZombie) {
+            // Detener "pea" y continuar con el zombi
+            System.out.println("The 'Pea' stops and disappears.");
         } else {
             System.out.println("The 'Pea' passes through an empty cell.");
         }
@@ -178,19 +173,15 @@ public class GameCell extends JButton {
     }
 
     private void sendPea() {
-        if (next != null && !next.isOccupied()) {
+        if (next != null) {
             next.receive("Pea", "Pea");
             next.addPea();
-        } else {
-            System.out.println("Cannot send pea, next cell is occupied.");
         }
     }
 
     private void sendZombie() {
-        if (previous != null && !previous.isOccupied()) {
+        if (previous != null) {
             previous.receive("Zombie", currentZombieType);
-        } else {
-            System.out.println("Cannot send zombie, previous cell is occupied.");
         }
     }
 
@@ -204,15 +195,6 @@ public class GameCell extends JButton {
         occuped = true;
     }
 
-    public void setOverlayImage(String imagePath) {
-        if (imagePath != null) {
-            this.overlayImage = new ImageIcon(imagePath);
-        } else {
-            this.overlayImage = null;
-        }
-        repaint();
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -220,16 +202,36 @@ public class GameCell extends JButton {
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage.getImage(), bgX, bgY, getWidth(), getHeight(), this);
         }
-        if (overlayImage != null) {
-            g2d.drawImage(overlayImage.getImage(), overlayX, overlayY, getWidth(), getHeight(), this);
+        for (Pea pea : peas) {
+            g2d.drawImage(new ImageIcon("images/Pea.png").getImage(), pea.x, 0, getWidth(), getHeight(), this);
         }
     }
-    public void removePlant() {
-        if (currentPlantType != null) {
-            this.currentPlantType = null; // Clear the current plant type
-            this.backgroundImage = null; // Remove the background image
-            repaint(); // Redraw the cell
+
+    private class Pea {
+        int x, y;
+        private Timer movePeaTimer;
+
+        Pea(int x, int y) {
+            this.x = x;
+            this.y = y;
         }
 
+        void startMovement() {
+            movePeaTimer = new Timer(50, e -> {
+                x += 2;
+                if (x > getWidth()) {
+                    send("Pea", "Pea");
+                    peas.remove(this);
+                    movePeaTimer.stop();
+                } else if (hasZombie() && x >= bgX) {
+                    // Detener "pea" y continuar con el zombi
+                    peas.remove(this);
+                    movePeaTimer.stop();
+                    repaint();
+                }
+                repaint();
+            });
+            movePeaTimer.start();
+        }
     }
 }
