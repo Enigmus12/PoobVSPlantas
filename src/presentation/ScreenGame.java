@@ -343,22 +343,33 @@ public class ScreenGame extends JFrame {
     private void gameOnePlayer() {
         // Crear un Timer para generar zombies periódicamente
         Timer zombieSpawnTimer = new Timer(10 * 1000, e -> { // Cada 10 segundos
-            // Obtener un zombie aleatorio desde el tablero
-            HashMap<String, int[]> coordenadaZombie = board.gameOnePlayer();
+            boolean zombieAgregado = false; // Bandera para verificar si se agregó un zombie
 
-            if (coordenadaZombie != null && !coordenadaZombie.isEmpty()) {
-                // Obtener la única entrada del HashMap
-                java.util.Map.Entry<String, int[]> entry = coordenadaZombie.entrySet().iterator().next();
+            while (!zombieAgregado) { // Repetir hasta que el zombie se agregue correctamente
+                try {
+                    // Obtener un zombie aleatorio desde el tablero
+                    HashMap<String, int[]> coordenadaZombie = board.gameOnePlayer();
 
-                // Extraer la clave (tipo de zombie) y el valor (posición)
-                String zombieType = entry.getKey();
-                int[] position = entry.getValue();
+                    if (coordenadaZombie != null && !coordenadaZombie.isEmpty()) {
+                        // Obtener la única entrada del HashMap
+                        java.util.Map.Entry<String, int[]> entry = coordenadaZombie.entrySet().iterator().next();
 
-                // Validar la posición antes de agregar el zombie
-                if (position[0] >= 0 && position[0] < ROWS && position[1] >= 0 && position[1] < COLS) {
-                    GameCell cell = cells[position[0]][position[1]];
-                    cell.addZombie(zombieType);
-                    cell.repaint();
+                        // Extraer la clave (tipo de zombie) y el valor (posición)
+                        String zombieType = entry.getKey();
+                        int[] position = entry.getValue();
+
+                        // Validar la posición antes de agregar el zombie
+                        if (position[0] >= 0 && position[0] < ROWS && position[1] >= 0 && position[1] < COLS) {
+                            GameCell cell = cells[position[0]][position[1]];
+
+                            // Intentar agregar el zombie; si la celda está ocupada, lanza excepción
+                            cell.addZombie(zombieType);
+                            cell.repaint();
+                            zombieAgregado = true; // Zombie agregado correctamente
+                        }
+                    }
+                } catch (PoobVSZombiesExeption ex) {
+                    // Si ocurre una excepción, no hacemos nada y seguimos intentando
                 }
             }
 
@@ -370,5 +381,6 @@ public class ScreenGame extends JFrame {
         zombieSpawnTimer.setRepeats(true);          // Repetir indefinidamente
         zombieSpawnTimer.start();
     }
+
 
 }

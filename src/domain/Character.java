@@ -54,4 +54,6 @@ public abstract class Character {
         this.positionY = positionY;
     }
     public int getHealth() { return health; }
+
+
 }

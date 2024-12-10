@@ -10,7 +10,9 @@ public abstract class Zombie extends Character {
         // Inicializar salud y velocidad según el tipo de zombie
         this.damage = 10; // Daño base predeterminado
     }
-
+    public void move(){
+        this.positionX -= 1;
+    }
     /**
      * Método de ataque estándar para zombies
      * @param target La planta objetivo del ataque

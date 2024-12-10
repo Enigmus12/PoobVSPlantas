@@ -47,6 +47,7 @@ public class GameCell extends JButton {
         this.peas = new ArrayList<>();
         setContentAreaFilled(false);
         haveZombie = false;
+        this.board=Board.getBoard();
     }
 
     public int getRow() {
@@ -151,7 +152,7 @@ public class GameCell extends JButton {
 
     public void receive(String type, String typeCharacter) {
         if ("Zombie".equals(type)) {
-            addZombie(typeCharacter); // Eliminar la verificación de ocupación
+            addZombie(typeCharacter);
         }
 
     }
@@ -183,8 +184,11 @@ public class GameCell extends JButton {
 
     private void sendZombie() {
         if (previous != null) {
-            previous.receive("Zombie", currentZombieType);
-        }
+            if(!previous.isOccupied()) {
+                previous.receive("Zombie", currentZombieType);
+                board.moveZombie(row,column);
+            }
+            }
     }
 
     public void removeBackground() {

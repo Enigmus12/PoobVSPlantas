@@ -6,8 +6,7 @@ import java.util.HashMap;
 
 public class Board {
 
-    private Cell[][] cells;
-    private ArrayList<Character> activeCharacters;
+    private Character[][] characters;
     private int suns;
     private static final int ROWS = 5;
     private static final int COLS = 10;
@@ -37,27 +36,14 @@ public class Board {
     private Board() {
         namePlayerOne = "";
         namePlayerTwo = "";
-        this.cells = new Cell[ROWS][COLS];
-        this.activeCharacters = new ArrayList<>();
+        this.characters= new Character[ROWS][COLS];
         this.suns = 0;
         this.zombieOriginal = new ZombiesOriginal();
-
-        // Inicializar las celdas
-        initializeCells();
-
         // Inicializar timers
         initializeGameTimer();
         initializeSunGenerationTimer();
     }
 
-    // Inicializa las celdas del tablero
-    private void initializeCells() {
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
-                cells[i][j] = new Cell(i, j);
-            }
-        }
-    }
 
     // Inicializa el timer del juego
     private void initializeGameTimer() {
@@ -70,17 +56,9 @@ public class Board {
         // Generar soles periódicamente
         generateSuns();
 
-        // Actualizar las plantas
-        updatePlants();
 
-        // Verificar colisiones entre zombies y plantas
-        checkCollisions();
 
-        // Eliminar personajes muertos
-        removeDeadCharacters();
 
-        // Mover zombies
-        moveZombies();
     }
 
     public static int getROWS() {
@@ -91,123 +69,17 @@ public class Board {
         return COLS;
     }
 
-    // Actualiza las plantas
-    private void updatePlants() {
-        for (Character character : activeCharacters) {
-            if (character instanceof Plant) {
-                Plant plant = (Plant) character;
-                if (plant instanceof SunFlower) {
-                    suns += ((SunFlower) plant).generateSuns();
-                } else if (plant instanceof PeasShooter) {
-                    ((PeasShooter) plant).attack();
-                }
-            }
-        }
-    }
-
-    // Elimina los personajes muertos
-    private void removeDeadCharacters() {
-        activeCharacters.removeIf(character -> {
-            if (!character.isAlive()) {
-                cells[character.getPositionX()][character.getPositionY()].clear();
-                return true;  // Elimina el personaje de la lista.
-            }
-            return false;  // Mantén el personaje en la lista.
-        });
-    }
-
-    // Verifica las colisiones entre zombies y plantas
-    private void checkCollisions() {
-        for (Character character : activeCharacters) {
-            if (character instanceof Zombie) {
-                Zombie zombie = (Zombie) character;
-                int row = zombie.getPositionX();
-                int col = zombie.getPositionY();
-
-                // Verificar si hay una planta en la misma posición
-                if (col >= 0 && cells[row][col].isOccupied()) {
-                    Character occupant = cells[row][col].getOccupant();
-                    if (occupant instanceof Plant) {
-                        Plant plant = (Plant) occupant;
-                        
-                        // El zombie ataca a la planta
-                        zombie.attack(plant);
-                        
-                        // Verificar si la planta sigue viva después del ataque
-                        if (!plant.isAlive()) {
-                            // Eliminar la planta muerta
-                            activeCharacters.remove(plant);
-                            cells[row][col].clear();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    // Método para verificar si un zombie puede moverse
-    private boolean canMoveZombie(Zombie zombie, int row, int col) {
-        // Si el zombie está en la primera columna, no puede moverse más
-        if (col <= 0) {
-            return false;
-        }
-
-        // Verificar que la columna a la izquierda esté libre de zombies
-        Cell targetCell = cells[row][col - 1];
-        
-        // Permitir que el zombie se mueva si la celda está vacía 
-        // o solo contiene una planta
-        return !targetCell.isOccupied() || 
-            (targetCell.getOccupant() instanceof Plant);
-    }
-
-    // método para mover zombies
-    private void moveZombies() {
-        for (Character character : new ArrayList<>(activeCharacters)) {
-            if (character instanceof Zombie) {
-                Zombie zombie = (Zombie) character;
-                int currentRow = zombie.getPositionX();
-                int currentCol = zombie.getPositionY();
-    
-                // Verificar si puede moverse
-                if (canMoveZombie(zombie, currentRow, currentCol)) {
-                    // Liberar la celda actual
-                    cells[currentRow][currentCol].clear();
-    
-                    // Mover un paso a la izquierda (hacia la columna 0)
-                    int newCol = currentCol - 1;
-                    
-                    // Actualizar la posición del zombie
-                    zombie.updatePosition(currentRow, newCol);
-                    
-                    // Intentar colocar el zombie en la nueva celda
-                    cells[currentRow][newCol].setOccupant(zombie);
-                }
-            }
-        }
-    }
-
-
     // Añade una planta al tablero
-    public Plant addPlant(String plantType, int row, int column) throws PoobVSZombiesExeption {
-        Cell cell = cells[row][column];
-
-        // Verificar si hay un zombie en la celda
-        if (cell.getOccupant() instanceof Zombie) {
-            throw new PoobVSZombiesExeption("No se puede plantar sobre un zombie");
-        }
-
+    public void addPlant(String plantType, int row, int column) throws PoobVSZombiesExeption {
+        Character cell = characters[row][column];
         // Verifica si la celda está ocupada
-        if (cell.isOccupied()) {
+        if (cell != null) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_OCUPATED);
         }
-
         Plant plant = createPlant(plantType, row, column);
         if (plant == null) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INVALID_PLANT + plantType);
         }
-
         // Verifica si la planta puede ser plantada y si hay suficientes soles
         if (!plant.canBePlanted(row, column)) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
@@ -217,12 +89,11 @@ public class Board {
         }
 
         // Coloca la planta en la celda
-        cell.setOccupant(plant);
+        cell=plant;
         plant.updatePosition(row, column);  // Actualiza la posición de la planta
-        activeCharacters.add(plant);        // Añade la planta a los personajes activos
+
         suns -= plant.getSunCost();         // Reduce el costo en soles
 
-        return plant;  // Retorna la planta creada
     }
 
     // Crea la planta según el tipo proporcionado
@@ -250,8 +121,6 @@ public class Board {
 
 
     public int getSuns() { return suns; }
-    public Cell getCell(int row, int col) { return cells[row][col]; }
-    public ArrayList<Character> getActiveCharacters() { return activeCharacters; }
 
     // Validación de nombres de jugadores
     public void validateNameOnePlayer(String name) throws PoobVSZombiesExeption {
@@ -271,10 +140,64 @@ public class Board {
         namePlayerOne = name1;
         namePlayerTwo = name2;
     }
+    // Crea el zombie según el tipo proporcionado
+    private Zombie createZombie(String zombieType, int row, int column) {
+        switch (zombieType) {
+            case "BasicZombie":
+                return new BasicZombie(row, column);
+            case "ConeheadZombie":
+                return new ConeheadZombie(row, column);
+            default:
+                return null; // Zombie no válido
+        }
+    }
+    public void moveZombie(int row, int column) {
+        // Verifica si las coordenadas están dentro de los límites
+        if (row < 0 || row >= ROWS || column < 0 || column >= COLS) {
+            System.out.println("Coordenadas fuera de rango: (" + row + ", " + column + ")");
+            return;
+        }
+
+        // Obtén el zombie en la celda actual
+        Character currentCell = characters[row][column];
+        if (currentCell == null || !(currentCell instanceof Zombie)) {
+            System.out.println("No hay un zombie en la celda: (" + row + ", " + column + ")");
+            return; // No hay nada que mover
+        }
+
+        Zombie zombie = (Zombie) currentCell;
+
+        // Verifica si puede moverse a la siguiente celda
+        int newColumn = column - 1; // El zombie se mueve hacia la izquierda
+        if (newColumn < 0) {
+            System.out.println("El zombie alcanzó el borde del tablero.");
+            return; // El zombie no puede moverse fuera del tablero
+        }
+
+        if (characters[row][newColumn] != null) {
+            System.out.println("La celda destino está ocupada: (" + row + ", " + newColumn + ")");
+            return; // No se puede mover a una celda ocupada
+        }
+
+        // Mueve el zombie
+        characters[row][newColumn] = zombie; // Actualiza la nueva posición
+        characters[row][column] = null;      // Limpia la posición anterior
+        zombie.move();                       // Ejecuta la lógica de movimiento del zombie
+    }
+
 
     // Método para realizar la logica del ZombieOriginal
-    public HashMap<String, int[]> gameOnePlayer() {
-        return zombieOriginal.attack();
+    public HashMap<String, int[]> gameOnePlayer() throws PoobVSZombiesExeption{
+        HashMap<String,int[]> informacionZombie=zombieOriginal.attack();
+        String zombieType = informacionZombie.keySet().iterator().next();
+        int[] coordenadas =informacionZombie.get(zombieType);
+        Character cell=characters[coordenadas[0]][coordenadas[1]];
+        if (cell!=null){
+            throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_OCUPATED);
+        }
+        Zombie zombie=createZombie(zombieType, coordenadas[0],coordenadas[1]);
+        characters[coordenadas[0]][coordenadas[1]]=zombie;
+        return informacionZombie;
     }
 
     public void shovel(int row,int column) throws PoobVSZombiesExeption{
@@ -284,17 +207,15 @@ public class Board {
         }
 
         // Obtener la celda
-        Cell cell = getCell(row, column);
+        Character cell =characters[row][column];
 
         // Verificar si la celda está ocupada por una planta
-        if (!cell.isOccupied() || !(cell.getOccupant() instanceof Plant)) {
+        if (cell==null || !(cell instanceof Plant)) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_EMPTY);
         }
 
-        // Eliminar la planta de la celda y de los personajes activos
-        Plant plant = (Plant) cell.getOccupant();
-        getActiveCharacters().remove(plant);
-        cell.clear();
+        cell=null;
+
     }
 
 }
