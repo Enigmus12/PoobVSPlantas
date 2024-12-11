@@ -249,8 +249,8 @@ public class GameCell extends JButton {
         }
 
         void startMovement() {
-            movePeaTimer = new Timer(50, e -> {
-                x += 2;
+            movePeaTimer = new Timer(100, e -> {
+                x += 1;
                 if (x > getWidth()) {
                     send("Pea", "Pea");
                     peas.remove(this);

@@ -3,7 +3,7 @@ package domain;
 import java.util.HashMap;
 import java.util.Random;
 
-public class ZombiesOriginal extends Maquina {
+public class ZombiesOriginal extends Machine {
 
 
     public HashMap<String, int[]> attack() {

@@ -2,7 +2,7 @@ package domain;
 
 import java.util.ArrayList;
 
-public abstract class Maquina {
+public abstract class Machine {
     private static final ArrayList<String> listaPlants = new ArrayList<>();
 
     // Bloque estático para inicializar la lista
