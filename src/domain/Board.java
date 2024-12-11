@@ -180,10 +180,6 @@ public class Board {
             return; // El zombie no puede moverse fuera del tablero
         }
 
-        if (characters[row][newColumn] != null) {
-            System.out.println("La celda destino está ocupada: (" + row + ", " + newColumn + ")");
-            return; // No se puede mover a una celda ocupada
-        }
 
         // Mueve el zombie
         characters[row][newColumn] = zombie; // Actualiza la nueva posición
@@ -211,17 +207,37 @@ public class Board {
         if (row < 0 || row >= getROWS() || column < 0 || column >= getCOLS()) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.INCORRECT_POSITION);
         }
-    
-        // Obtener la celda
         Character cell = characters[row][column];
     
-        // Verificar si la celda está ocupada por una planta
         if (cell == null || !(cell instanceof Plant)) {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_EMPTY);
         }
     
-        // Eliminar completamente la planta de la celda
         characters[row][column] = null;
+    }
+    public boolean damageZombie(int row, int column, String typeDamage) {
+        Character character = characters[row][column];
+
+        if (character instanceof Zombie) {  // Verifica si es una instancia de Zombie
+            Zombie zombie = (Zombie) character;  // Ahora es seguro hacer el cast
+
+            if ("Pea".equals(typeDamage)) {  // Comprobación de tipo de daño
+                zombie.strikePea();  // Aplica el daño
+            }
+            return zombie.isAlive();  // Retorna si el zombi sigue vivo
+        } else {
+            System.out.println("No zombie at position (" + row + "," + column + ")");
+            return false;  // Si no hay zombi, retorna false o realiza alguna acción alternativa
+        }
+    }
+
+
+    public void removeZombie(int row, int column) {
+    Character zombie =characters[row][column];
+    if(zombie instanceof Zombie){
+        characters[row][column]=null;
+        System.out.println("se elimino");
+    }
     }
 }
 

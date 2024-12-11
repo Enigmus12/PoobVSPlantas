@@ -260,6 +260,10 @@ public class GameCell extends JButton {
                     peas.remove(this);
                     movePeaTimer.stop();
                     repaint();
+                    if(!board.damageZombie(row, column, "Pea")){
+                        backgroundImage = null;
+                        board.removeZombie(row, column);
+                    }
                 }
                 repaint();
             });

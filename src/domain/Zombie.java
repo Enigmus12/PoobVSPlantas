@@ -3,11 +3,11 @@ package domain;
 public abstract class Zombie extends Character {
     protected int speed; // Velocidad de movimiento del zombie
     protected int damage; // Daño base del zombie
-    
+    protected int health;
     public Zombie(int row, int col) {
         this.positionX = row;
         this.positionY = col;
-        // Inicializar salud y velocidad según el tipo de zombie
+
         this.damage = 10; // Daño base predeterminado
     }
     public void move(){
@@ -22,5 +22,13 @@ public abstract class Zombie extends Character {
             target.receiveDamage(this.damage);
         }
     }
+    public boolean isAlive(){
+        return health <= 0;
+    }
+
+    public void strikePea() {
+        this.health -=20;
+    }
+
 
 }
