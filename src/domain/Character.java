@@ -32,6 +32,15 @@ public abstract class Character {
         this.positionX = x;
         this.positionY = y;
     }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+
+
+
+    
     public int getPositionX() { 
         return positionX; 
     }
@@ -44,5 +53,7 @@ public abstract class Character {
     public void setPositionY(int positionY) {
         this.positionY = positionY;
     }
+    public int getHealth() { return health; }
+
 
 }

@@ -18,10 +18,10 @@ public abstract class Plant extends Character {
     public int getSunCost() {
         return sunCost;
     }
-    
+
     @Override
     public void receiveDamage(int amount) {
         super.receiveDamage(amount);
-        System.out.println("Plant at [" + positionX + "," + positionY + "] received " + amount + " damage. Remaining health: " + health);
+        
     }
 }

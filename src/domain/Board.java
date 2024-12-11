@@ -56,8 +56,7 @@ public class Board {
         // Generar soles periódicamente
         generateSuns();
 
-
-
+        ZombieAttack();
 
     }
 
@@ -239,5 +238,47 @@ public class Board {
         System.out.println("se elimino");
     }
     }
+
+    public void ZombieAttack() {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                Character currentCharacter = characters[row][col];
+                
+                // Si la celda actual contiene un zombie
+                if (currentCharacter instanceof Zombie) {
+                    Zombie zombie = (Zombie) currentCharacter;
+                    
+                    // Verificamos que la celda a la izquierda del zombie (su dirección de ataque)
+                    if (col > 0) {
+                        Character targetCharacter = characters[row][col - 1];
+                        
+                        // Si hay una planta en la celda adyacente
+                        if (targetCharacter instanceof Plant) {
+                            Plant plant = (Plant) targetCharacter;
+                            
+                            // El zombie ataca a la planta
+                            plant.receiveDamage(zombie.damage);
+                            
+                            // Verificar si la planta ha muerto
+                            if (!plant.isAlive()) {
+                                characters[row][col - 1] = null; // Eliminar la planta muerta
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public int getPlantHealth(int row, int column) {
+        Character character = characters[row][column];
+        if (character instanceof Plant) {
+            Plant plant = (Plant) character;
+            return plant.getHealth(); 
+        }
+        return 0;
+    }
+    
+
 }
 

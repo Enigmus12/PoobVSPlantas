@@ -142,7 +142,18 @@ public class GameCell extends JButton {
 
     private void initializeZombieMovement() {
         moveTimer = new Timer(100, e -> {
-            bgX -= 1; // velocidad de movimiento
+            bgX -= 8; // velocidad de movimiento
+            
+            // Si hay una planta en la celda anterior y estamos lo suficientemente cerca
+            if (previous != null && previous.currentPlantType != null && bgX <= getWidth() / 8) {
+                // Iniciar el ataque
+                ZombieAttack();
+                
+                // Detener el movimiento cuando está muy cerca de la planta
+                ((Timer) e.getSource()).stop();
+                return;
+            }
+            
             repaint(); // Repintar en cada iteración para mostrar el movimiento
     
             if (bgX < -getWidth()) {
@@ -157,10 +168,6 @@ public class GameCell extends JButton {
         moveTimer.start();
     }
 
-    public boolean isZombieExited() {
-        return currentZombieType == null;
-    }
-
     public void receive(String type, String typeCharacter) {
         if ("Zombie".equals(type)) {
             addZombie(typeCharacter);
@@ -168,15 +175,6 @@ public class GameCell extends JButton {
 
     }
     
-
-    private void handlePea() {
-        if (isOccupied() && haveZombie) {
-            // Detener "pea" y continuar con el zombi
-            System.out.println("The 'Pea' stops and disappears.");
-        } else {
-            System.out.println("The 'Pea' passes through an empty cell.");
-        }
-    }
 
     private void send(String type, String typeCharacter) {
         if ("Pea".equals(type)) {
@@ -249,8 +247,8 @@ public class GameCell extends JButton {
         }
 
         void startMovement() {
-            movePeaTimer = new Timer(100, e -> {
-                x += 1;
+            movePeaTimer = new Timer(50, e -> {
+                x += 2;
                 if (x > getWidth()) {
                     send("Pea", "Pea");
                     peas.remove(this);
@@ -270,4 +268,29 @@ public class GameCell extends JButton {
             movePeaTimer.start();
         }
     }
+
+    //ataque del zombie
+    private void ZombieAttack() {
+        if (currentPlantType != null && currentZombieType != null) {
+            // Obtener la instancia del tablero
+            Board board = Board.getBoard();
+            
+            // Crear un timer para simular el ataque
+            Timer attackTimer = new Timer(1000, e -> {
+                // Aplicar daño a la planta
+                board.ZombieAttack();
+                
+                // Verificar si la planta sigue viva
+                if (board.getPlantHealth(row, column) <= 0) {
+                    // Si la planta muere, eliminarla visualmente
+                    removePlant();
+                }
+                
+                repaint();
+            });
+            attackTimer.setRepeats(true);
+            attackTimer.start();
+        }
+    }
+
 }
