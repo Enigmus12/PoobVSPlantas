@@ -113,9 +113,11 @@ public class GameCell extends JButton {
     public void addZombie(String zombieType) {
         this.currentZombieType = zombieType;
         updateBackgroundImage(ZOMBIE_IMAGES.getOrDefault(zombieType, ZOMBIE_IMAGES.get("ZombieBasic")));
+        bgX = getWidth(); // Comenzar desde el borde derecho
         initializeZombieMovement();
         occuped = true;
         haveZombie = true;
+        repaint(); // Forzar repintado inicial
     }
 
     private void updateBackgroundImage(String imagePath) {
@@ -140,16 +142,17 @@ public class GameCell extends JButton {
 
     private void initializeZombieMovement() {
         moveTimer = new Timer(100, e -> {
-            bgX -= 1;
+            bgX -= 1; // velocidad de movimiento
+            repaint(); // Repintar en cada iteración para mostrar el movimiento
+    
             if (bgX < -getWidth()) {
                 ((Timer) e.getSource()).stop();
                 send("Zombie", currentZombieType);
                 removeBackground();
-                occuped = false; // Liberar la celda cuando el zombie sale
-                haveZombie = false;  // para limpiar completamente el estado del zombie
+                occuped = false;
+                haveZombie = false;
                 currentZombieType = null;
             }
-            repaint();
         });
         moveTimer.start();
     }
@@ -219,18 +222,18 @@ public class GameCell extends JButton {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         
-        // Primero dibujar el fondo (zombie o lawnmower)
+        // Dibujar zombie o background en movimiento
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage.getImage(), bgX, bgY, getWidth(), getHeight(), this);
         }
         
-        // Dibujar la planta si existe
+        // Si hay planta, dibujarla
         if (currentPlantType != null) {
             ImageIcon plantIcon = new ImageIcon(PLANT_IMAGES.get(currentPlantType));
             g2d.drawImage(plantIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
         }
         
-        // Dibujar las "peas"
+        // Dibujar "peas"
         for (Pea pea : peas) {
             g2d.drawImage(new ImageIcon("images/Pea.png").getImage(), pea.x, 0, getWidth(), getHeight(), this);
         }

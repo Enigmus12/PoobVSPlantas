@@ -167,7 +167,7 @@ public class Board {
         // Obtén el zombie en la celda actual
         Character currentCell = characters[row][column];
         if (currentCell == null || !(currentCell instanceof Zombie)) {
-            System.out.println("No hay un zombie en la celda: (" + row + ", " + column + ")");
+            System.out.println("hay un zombie en la celda: (" + row + ", " + column + ")");
             return; // No hay nada que mover
         }
 
