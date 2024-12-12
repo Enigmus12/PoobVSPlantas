@@ -145,7 +145,7 @@ public class Board {
     }
     // Crea el zombie según el tipo proporcionado
     private Zombie createZombie(String zombieType, int row, int column) {
-        if (zombieType.equals("BasicZombie")) {
+        if (zombieType.equals("ZombieBasic")) {
             return new BasicZombie(row, column);
         } else if (zombieType.equals("ConeheadZombie")) {
             return new ConeheadZombie(row, column);
@@ -161,9 +161,9 @@ public class Board {
 
         // Obtén el zombie en la celda actual
         Character currentCell = characters[row][column];
-        System.out.println(currentCell);
+        System.out.println(currentCell+"move");
         if (currentCell == null || !(currentCell instanceof Zombie)) {
-            System.out.println("hay un zombie en la celda: (" + row + ", " + column + ")");
+            System.out.println(" no hay un zombie en la celda: (" + row + ", " + column + ")");
             return; // No hay nada que mover
         }
 
