@@ -3,7 +3,7 @@ package domain;
 public abstract class Plant extends Character {
     protected int rechargeTime;
     protected int sunCost;
-    
+    protected int health;
     /**
      * Verifica si la planta puede ser plantada
      * @return true si cumple las condiciones para ser plantada
@@ -14,7 +14,12 @@ public abstract class Plant extends Character {
         }
         return true;
     }
-    
+
+    @Override
+    public int getHealth() {
+        return health;
+    }
+
     public int getSunCost() {
         return sunCost;
     }
