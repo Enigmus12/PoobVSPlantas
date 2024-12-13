@@ -159,6 +159,7 @@ public class GameCell extends JButton {
             if (bgX < -getWidth()) {
                 ((Timer) e.getSource()).stop();
                 send("Zombie", currentZombieType);
+                System.out.println(currentZombieType);
                 removeBackground();
                 occuped = false;
                 haveZombie = false;
@@ -170,6 +171,7 @@ public class GameCell extends JButton {
 
     public void receive(String type, String typeCharacter) {
         if ("Zombie".equals(type)) {
+
             addZombie(typeCharacter);
         }
 
@@ -202,6 +204,7 @@ public class GameCell extends JButton {
                 this.currentZombieType = null;
                 this.backgroundImage = null;
             }
+
         }
     }
 
@@ -273,18 +276,20 @@ public class GameCell extends JButton {
         if (previous.currentPlantType != null && currentZombieType != null) {
             Timer attackTimer = new Timer(1000, e -> {
                 // Aplicar daño a la planta
-                if(!board.ZombieAttack(row,column)){
+                if (!board.ZombieAttack(row, column)) { // La planta ha muerto
                     previous.removePlant();
-                    send("Zombie",currentZombieType);
+                    board.removePlant(row,column-1);// Elimina la planta
+                    ((Timer) e.getSource()).stop(); // Detiene el temporizador de ataque
+                    initializeZombieMovement(); // Reanuda el movimiento del zombie
                     return;
                 }
-                
+
                 repaint();
             });
             attackTimer.setRepeats(true);
             attackTimer.start();
         }
-
     }
+
 
 }
