@@ -23,6 +23,9 @@ public class GameCell extends JButton {
     private Timer peaTimer;
     private List<Pea> peas; // Lista para almacenar las "peas"
 
+    private boolean lawnMowerActive = false;
+
+
     private static final Map<String, String> PLANT_IMAGES = Map.of(
             "SunFlower", "images/SunFlower.png",
             "PeasShooter", "images/PeasShooter.png",
@@ -142,7 +145,13 @@ public class GameCell extends JButton {
 
     private void initializeZombieMovement() {
         moveTimer = new Timer(100, e -> {
-            bgX -= 1; // velocidad de movimiento
+            bgX -= 10; // velocidad de movimiento
+
+
+            // Si hay una podadora en la celda anterior
+            if (previous != null && previous.lawnMowerActive == false && bgX <= 0) {
+                previous.activateLawnMower();
+            }
             
             // Si hay una planta en la celda anterior y estamos lo suficientemente cerca
             if (previous != null && previous.currentPlantType != null && bgX <= getWidth() / 8) {
@@ -286,5 +295,26 @@ public class GameCell extends JButton {
         }
 
     }
+
+    public void activateLawnMower() {
+        if (!lawnMowerActive) {
+            lawnMowerActive = true;
+            board.activateLawnMower(row);
+            
+            // Timer para mover la podadora hacia la derecha
+            Timer mowerTimer = new Timer(50, e -> {
+                bgX += 5; 
+                repaint();
+                
+                // Detener cuando salga de la pantalla
+                if (bgX > getWidth() * 2) {
+                    ((Timer)e.getSource()).stop();
+                    removeBackground();
+                }
+            });
+            mowerTimer.start();
+        }
+    }
+    
 
 }

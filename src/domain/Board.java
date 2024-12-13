@@ -285,5 +285,14 @@ public class Board {
 
 
     }
+
+    public void activateLawnMower(int row) {
+        // Elimina todos los zombies en la fila
+        for (int col = 0; col < COLS; col++) {
+            if (characters[row][col] instanceof Zombie) {
+                characters[row][col] = null;
+            }
+        }
+    }
 }
 
