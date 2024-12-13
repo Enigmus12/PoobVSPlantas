@@ -282,8 +282,15 @@ public class Board {
             Zombie zombie = (Zombie) characters[row][column];
             plant.receiveDamage(zombie.getDamage());
             System.out.println("si se hizo daño"+plant.getHealth());
+    }
 
-
+    public void activateLawnMower(int row) {
+        // Eliminar todos los zombies en la fila
+        for (int col = 0; col < COLS; col++) {
+            if (characters[row][col] instanceof Zombie) {
+                characters[row][col] = null;
+            }
+        }
     }
 }
 
