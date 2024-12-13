@@ -150,7 +150,7 @@ public class Board {
         } else if (zombieType.equals("ConeheadZombie")) {
             return new ConeheadZombie(row, column);
         }
-        return null; // Zombie no válido
+        return null;
     }
     public void moveZombie(int row, int column) {
         // Verifica si las coordenadas están dentro de los límites
@@ -161,12 +161,10 @@ public class Board {
 
         // Obtén el zombie en la celda actual
         Character currentCell = characters[row][column];
-        System.out.println(currentCell+"move");
         if (currentCell == null || !(currentCell instanceof Zombie)) {
             System.out.println(" no hay un zombie en la celda: (" + row + ", " + column + ")");
             return; // No hay nada que mover
         }
-
         Zombie zombie = (Zombie) currentCell;
 
         // Verifica si puede moverse a la siguiente celda
@@ -216,10 +214,8 @@ public class Board {
     }
     public boolean damageZombie(int row, int column, String typeDamage) {
         Character character = characters[row][column];
-
         if (character instanceof Zombie) {  // Verifica si es una instancia de Zombie
             Zombie zombie = (Zombie) character;  // Ahora es seguro hacer el cast
-
             if ("Pea".equals(typeDamage)) {  // Comprobación de tipo de daño
                 zombie.strikePea();  // Aplica el daño
             }
@@ -239,34 +235,36 @@ public class Board {
     }
     }
 
-    public void ZombieAttack(int row,int col) {
-
+    public boolean ZombieAttack(int row, int col) {
         Character currentCharacter = characters[row][col];
         System.out.println(currentCharacter);
+
         // Si la celda actual contiene un zombie
         if (currentCharacter instanceof Zombie) {
             Zombie zombie = (Zombie) currentCharacter;
             System.out.println("si hay zombie");
+
             // Verificamos que la celda a la izquierda del zombie (su dirección de ataque)
             if (col > 0) {
                 Character targetCharacter = characters[row][col - 1];
+
                 // Si hay una planta en la celda adyacente
                 if (targetCharacter instanceof Plant) {
                     Plant plant = (Plant) targetCharacter;
-                    System.out.println("si hay planta");
-                    // El zombie ataca a la planta
+
                     plant.receiveDamage(zombie.damage);
-                    System.out.println("daño");
-                    // Verificar si la planta ha muerto
-                    if (!plant.isAlive()) {
-                        characters[row][col - 1] = null; // Eliminar la planta muerta
-                    }
+
+                    return plant.health>0;
+
                 }
             }
         }
 
+        // Si no hay zombie o no hay una planta para atacar, retornar falso por defecto
+        return false;
     }
-    
+
+
     public int getPlantHealth(int row, int column) {
         Character character = characters[row][column];
         if (character instanceof Plant) {

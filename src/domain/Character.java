@@ -11,7 +11,7 @@ public abstract class Character {
      * @return true si el personaje tiene vida mayor a 0
      */
     public boolean isAlive() {
-        return health > 0;
+        return this.health > 0;
     }
     
     /**
@@ -20,7 +20,6 @@ public abstract class Character {
      */
     public void receiveDamage(int amount) {
         this.health -= amount;
-        if (this.health < 0) this.health = 0;
     }
     
     /**
