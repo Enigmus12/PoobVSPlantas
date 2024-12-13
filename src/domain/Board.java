@@ -265,21 +265,25 @@ public class Board {
     }
 
 
-    public void removePlant(int row, int column) {
-        Character plant =characters[row][column];
-        if(plant instanceof Plant){
-            characters[row][column]=null;
-            System.out.println("se elimino");
+    public int getPlantHealth(int row, int column) {
+        Character character = characters[row][column];
+        if (character instanceof Plant) {
+            Plant plant = (Plant) character;
+            return plant.getHealth(); 
         }
+        return 0;
     }
 
-    public void activateLawnMower(int row) {
-        // Elimina todos los zombies en la fila
-        for (int col = 0; col < COLS; col++) {
-            if (characters[row][col] instanceof Zombie) {
-                characters[row][col] = null;
-            }
-        }
+
+    public void zombieAttack(int row, int column) {
+
+            // Castea el objeto de la celda anterior a un objeto de tipo Plant
+            Plant plant = (Plant) characters[row][column - 1];
+            Zombie zombie = (Zombie) characters[row][column];
+            plant.receiveDamage(zombie.getDamage());
+            System.out.println("si se hizo daño"+plant.getHealth());
+
+
     }
 }
 
