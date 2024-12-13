@@ -212,6 +212,7 @@ public class Board {
     
         characters[row][column] = null;
     }
+
     public boolean damageZombie(int row, int column, String typeDamage) {
         Character character = characters[row][column];
         if (character instanceof Zombie) {  // Verifica si es una instancia de Zombie
@@ -219,10 +220,17 @@ public class Board {
             if ("Pea".equals(typeDamage)) {  // Comprobación de tipo de daño
                 zombie.strikePea();  // Aplica el daño
             }
-            return zombie.isAlive();  // Retorna si el zombi sigue vivo
+            
+            // Si el zombie ya no está vivo, eliminarlo del tablero
+            if (!zombie.isAlive()) {
+                characters[row][column] = null;
+                return false;  // Indicar que el zombie ha sido eliminado
+            }
+            
+            return true;  // El zombie sigue vivo
         } else {
             System.out.println("No zombie at position (" + row + "," + column + ")");
-            return false;  // Si no hay zombi, retorna false o realiza alguna acción alternativa
+            return false;  // Si no hay zombi, retorna false
         }
     }
 
@@ -237,12 +245,10 @@ public class Board {
 
     public boolean ZombieAttack(int row, int col) {
         Character currentCharacter = characters[row][col];
-        System.out.println(currentCharacter);
 
         // Si la celda actual contiene un zombie
         if (currentCharacter instanceof Zombie) {
             Zombie zombie = (Zombie) currentCharacter;
-            System.out.println("si hay zombie");
 
             // Verificamos que la celda a la izquierda del zombie (su dirección de ataque)
             if (col > 0) {
@@ -254,8 +260,13 @@ public class Board {
 
                     plant.receiveDamage(zombie.damage);
 
-                    return plant.health>0;
+                    // Si la planta muere, eliminarla completamente del tablero
+                    if (plant.health <= 0) {
+                        characters[row][col - 1] = null;
+                        return false;  // La planta ha sido eliminada
+                    }
 
+                    return true;  // La planta sigue viva
                 }
             }
         }
@@ -282,15 +293,8 @@ public class Board {
             Zombie zombie = (Zombie) characters[row][column];
             plant.receiveDamage(zombie.getDamage());
             System.out.println("si se hizo daño"+plant.getHealth());
-    }
 
-    public void activateLawnMower(int row) {
-        // Eliminar todos los zombies en la fila
-        for (int col = 0; col < COLS; col++) {
-            if (characters[row][col] instanceof Zombie) {
-                characters[row][col] = null;
-            }
-        }
+
     }
 }
 

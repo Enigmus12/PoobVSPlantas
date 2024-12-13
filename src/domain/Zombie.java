@@ -13,11 +13,11 @@ public abstract class Zombie extends Character {
     }
 
     public boolean isAlive(){
-        return health <= 0;
+        return health > 0;
     }
 
     public void strikePea() {
-        this.health -=20;
+        this.health -= 20;
     }
 
     public int getDamage() {
