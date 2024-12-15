@@ -144,7 +144,7 @@ public class GameCell extends JButton {
 
     private void initializeZombieMovement() {
         moveTimer = new Timer(100, e -> {
-            bgX -= 8; // velocidad de movimiento
+            bgX -= 3; // velocidad de movimiento
 
             // Si hay una planta en la celda anterior y estamos lo suficientemente cerca
             if (previous != null && previous.currentPlantType != null && bgX <= getWidth() / 8) {
@@ -203,7 +203,7 @@ public class GameCell extends JButton {
             currentZombieType = null;
         } else {
             moveTimer = new Timer(50, e -> {
-                bgX += 8; // Velocidad de movimiento hacia la derecha
+                bgX += 2; // Velocidad de movimiento hacia la derecha
 
                 repaint();
 
@@ -250,7 +250,7 @@ public class GameCell extends JButton {
 
             send("LawnMower", "LawnMower");
             board.lawnmower(row); // Notifica al tablero que se activó
-            
+
             lawnmowerActive = false; // Desactiva el lawnmower después de su uso
         }
         else{
