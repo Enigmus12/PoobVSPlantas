@@ -278,14 +278,6 @@ public class Board {
         return namePlayerOne;
     }
 
-    public void imprimirMarix(){
-        for (int i = 0; i < characters.length; i++) {         // Recorre las filas
-            for (int j = 0; j < characters[i].length; j++) {  // Recorre las columnas
-                System.out.print(characters[i][j] + " ");     // Imprime el valor de la celda
-            }
-            System.out.println();  // Nueva línea después de cada fila
-        }
-    }
 
     public void removePlant(int row, int column) {
         characters[row][column]=null;

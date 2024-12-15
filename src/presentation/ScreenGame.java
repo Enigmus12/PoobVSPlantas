@@ -88,7 +88,6 @@ public class ScreenGame extends JFrame {
         } else if (selectedPlant != null) {
             try {
                 board.addPlant(selectedPlant, cell.getRow(), cell.getColumn());
-                board.imprimirMarix();
                 cell.addPlant(selectedPlant);
                 cell.repaint();
                 updateSunsCounter();

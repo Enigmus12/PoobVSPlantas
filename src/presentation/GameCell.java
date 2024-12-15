@@ -250,7 +250,7 @@ public class GameCell extends JButton {
 
             send("LawnMower", "LawnMower");
             board.lawnmower(row); // Notifica al tablero que se activó
-            board.imprimirMarix();
+            
             lawnmowerActive = false; // Desactiva el lawnmower después de su uso
         }
         else{
