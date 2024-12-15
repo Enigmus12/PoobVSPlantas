@@ -108,6 +108,7 @@ public class GameCell extends JButton {
             this.currentPlantType = null;
             this.backgroundImage = null;
             repaint();
+            board.removePlant(row,column);
         }
     }
 
@@ -172,7 +173,11 @@ public class GameCell extends JButton {
     public void receive(String type, String typeCharacter) {
         if ("Zombie".equals(type)) {
             addZombie(typeCharacter);
+        }else if("LawnMower".equals(type)){
+            addLawnMower(row);
+            chekLawnMower();
         }
+
 
     }
 
@@ -224,7 +229,7 @@ public class GameCell extends JButton {
         if (previous != null) {
             if (!previous.isOccupied()) {
                 if(previous.getColumn()==0){
-                    chekLawnMower();
+                    previous.chekLawnMower();
                 }else {
                     previous.receive("Zombie", currentZombieType);
                     board.moveZombie(row, column);
@@ -235,18 +240,21 @@ public class GameCell extends JButton {
                     this.backgroundImage = null;
                 }
             }
-        }else {
-            JOptionPane.showMessageDialog(null, "Perdiste", "sigue intentando", JOptionPane.INFORMATION_MESSAGE);
-            //arreglar el pausa y fin aca se agrega
         }
 
     }
 
     private void chekLawnMower() {
+        System.out.println(lawnmowerActive);
         if (lawnmowerActive) {
+
             send("LawnMower", "LawnMower");
             board.lawnmower(row); // Notifica al tablero que se activó
+            board.imprimirMarix();
             lawnmowerActive = false; // Desactiva el lawnmower después de su uso
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Perdiste! \nSigue intentando", "Juego", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

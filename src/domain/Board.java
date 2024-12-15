@@ -147,7 +147,7 @@ public class Board {
     private Zombie createZombie(String zombieType, int row, int column) {
         if (zombieType.equals("ZombieBasic")) {
             return new BasicZombie(row, column);
-        } else if (zombieType.equals("ConeheadZombie")) {
+        } else if (zombieType.equals("ConeHeadZombie")) {
             return new ConeheadZombie(row, column);
         }
         return null;
@@ -216,7 +216,7 @@ public class Board {
     public boolean damageZombie(int row, int column, String typeDamage) {
         Character character = characters[row][column];
         if (character instanceof Zombie) {  // Verifica si es una instancia de Zombie
-            Zombie zombie = (Zombie) character;  // Ahora es seguro hacer el cast
+            Zombie zombie = (Zombie) character;
             if ("Pea".equals(typeDamage)) {  // Comprobación de tipo de daño
                 zombie.strikePea();  // Aplica el daño
             }
@@ -229,19 +229,11 @@ public class Board {
             
             return true;  // El zombie sigue vivo
         } else {
-            System.out.println("No zombie at position (" + row + "," + column + ")");
+
             return false;  // Si no hay zombi, retorna false
         }
     }
 
-
-    public void removeZombie(int row, int column) {
-    Character zombie =characters[row][column];
-    if(zombie instanceof Zombie){
-        characters[row][column]=null;
-        System.out.println("se elimino");
-    }
-    }
 
     public boolean ZombieAttack(int row, int col) {
         Character currentCharacter = characters[row][col];
@@ -276,24 +268,6 @@ public class Board {
     }
 
 
-    public int getPlantHealth(int row, int column) {
-        Character character = characters[row][column];
-        if (character instanceof Plant) {
-            Plant plant = (Plant) character;
-            return plant.getHealth(); 
-        }
-        return 0;
-    }
-
-
-    public void zombieAttack(int row, int column) {
-
-            // Castea el objeto de la celda anterior a un objeto de tipo Plant
-            Plant plant = (Plant) characters[row][column - 1];
-            Zombie zombie = (Zombie) characters[row][column];
-            plant.receiveDamage(zombie.getDamage());
-            System.out.println("si se hizo daño"+plant.getHealth());
-    }
     public void lawnmower(int row){
         for (int col = 0; col < characters[row].length; col++) {
             characters[row][col]=null;
@@ -302,6 +276,19 @@ public class Board {
 
     public String getNamePlayerOne() {
         return namePlayerOne;
+    }
+
+    public void imprimirMarix(){
+        for (int i = 0; i < characters.length; i++) {         // Recorre las filas
+            for (int j = 0; j < characters[i].length; j++) {  // Recorre las columnas
+                System.out.print(characters[i][j] + " ");     // Imprime el valor de la celda
+            }
+            System.out.println();  // Nueva línea después de cada fila
+        }
+    }
+
+    public void removePlant(int row, int column) {
+        characters[row][column]=null;
     }
 }
 
