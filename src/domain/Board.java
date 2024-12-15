@@ -157,14 +157,12 @@ public class Board {
     public void moveZombie(int row, int column) {
         // Verifica si las coordenadas están dentro de los límites
         if (row < 0 || row >= ROWS || column < 0 || column >= COLS) {
-            System.out.println("Coordenadas fuera de rango: (" + row + ", " + column + ")");
             return;
         }
 
         // Obtén el zombie en la celda actual
         Character currentCell = characters[row][column];
         if (currentCell == null || !(currentCell instanceof Zombie)) {
-            System.out.println(" no hay un zombie en la celda: (" + row + ", " + column + ")");
             return; // No hay nada que mover
         }
         Zombie zombie = (Zombie) currentCell;
@@ -172,7 +170,6 @@ public class Board {
         // Verifica si puede moverse a la siguiente celda
         int newColumn = column - 1; // El zombie se mueve hacia la izquierda
         if (newColumn < 0) {
-            System.out.println("El zombie alcanzó el borde del tablero.");
             return; // El zombie no puede moverse fuera del tablero
         }
 
@@ -194,7 +191,7 @@ public class Board {
             throw new PoobVSZombiesExeption(PoobVSZombiesExeption.CELL_IS_OCUPATED);
         }
 
-        System.out.println(zombieType);
+
         Zombie zombie=createZombie(zombieType, coordenadas[0],coordenadas[1]);
         characters[coordenadas[0]][coordenadas[1]]=zombie;
 

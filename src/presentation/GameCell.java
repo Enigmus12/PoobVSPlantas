@@ -108,6 +108,7 @@ public class GameCell extends JButton {
                 peaTimer.stop();
             }
             this.currentPlantType = null;
+            this.occuped=false;
             this.backgroundImage = null;
             repaint();
             board.removePlant(row,column);
@@ -240,6 +241,7 @@ public class GameCell extends JButton {
                     this.haveZombie = false;
                     this.currentZombieType = null;
                     this.backgroundImage = null;
+
                 }
             }
         }
@@ -247,7 +249,6 @@ public class GameCell extends JButton {
     }
 
     private void chekLawnMower() {
-        System.out.println(lawnmowerActive);
         if (lawnmowerActive) {
 
             send("LawnMower", "LawnMower");
@@ -280,12 +281,7 @@ public class GameCell extends JButton {
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage.getImage(), bgX, bgY, getWidth(), getHeight(), this);
         }
-        
-        // Si hay planta, dibujarla
-        if (currentPlantType != null) {
-            ImageIcon plantIcon = new ImageIcon(PLANT_IMAGES.get(currentPlantType));
-            g2d.drawImage(plantIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
-        }
+
         
         // Dibujar "peas"
         for (Pea pea : peas) {
@@ -343,15 +339,26 @@ public class GameCell extends JButton {
                 if(!board.ZombieAttack(row,column)){
                     previous.removePlant();
                     send("Zombie",currentZombieType);
+
+                    // Detener el timer de ataque actual
+                    ((Timer)e.getSource()).stop();
+
+                    // Reiniciar el movimiento del zombie
+                    if (moveTimer != null) {
+                        moveTimer.stop();
+                    }
+
+                    // Reiniciar el movimiento del zombie
+                    initializeZombieMovement();
+
                     return;
                 }
-                
+
                 repaint();
             });
             attackTimer.setRepeats(true);
             attackTimer.start();
         }
-
     }
 
 }
