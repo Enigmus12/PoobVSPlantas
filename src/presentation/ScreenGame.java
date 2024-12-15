@@ -18,7 +18,12 @@ public class ScreenGame extends JFrame {
     private int remainingTime; // Tiempo restante en segundos
     private JLabel timerLabel; // Para mostrar el tiempo restante
     private boolean shovelMode;
-    private String gameMode;
+    private PauseMenu pauseMenu;
+    private boolean isPaused = false;
+    private Timer gameTimer;
+    private Timer zombieSpawnTimer;
+    private MainApp mainApp; // Referencia al controlador principal
+
 
     public ScreenGame(MainApp app,String modeGame ) {
         this.app = app; // Recibir referencia de MainApp
@@ -53,9 +58,11 @@ public class ScreenGame extends JFrame {
         add(centerPanel, BorderLayout.CENTER);
 
         // Temporizador general del juego
-        Timer gameTimer = new Timer(1000, e -> {
-            updateSunsCounter(); // Actualiza los soles
-            updateTimer();       // Actualiza el temporizador
+        gameTimer = new Timer(1000, e -> {
+            if (!isPaused) {
+                updateSunsCounter(); // Actualiza los soles
+                updateTimer();       // Actualiza el temporizador
+            }
         });
         gameTimer.start();
     }
@@ -117,12 +124,37 @@ public class ScreenGame extends JFrame {
 
         // Agregar paneles al header
         header.add(createSunPanel(), BorderLayout.WEST);
-        header.add(createTimerPanel(), BorderLayout.EAST);
         header.add(createBackgroundPanel(), BorderLayout.CENTER);
-        header.add(createShovelButton(), BorderLayout.EAST);
+        header.add(createPauseButton(), BorderLayout.EAST);
 
         return header;
     }
+
+    private JButton createPauseButton() {
+        JButton pauseButton = new JButton();
+        pauseButton.setFocusPainted(false);
+        pauseButton.setBorderPainted(false);
+        pauseButton.setContentAreaFilled(false);
+    
+        ImageIcon icon = new ImageIcon("images/PauseButton.png"); 
+        Image scaledImage = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+        pauseButton.setIcon(new ImageIcon(scaledImage));
+        pauseButton.setPreferredSize(new Dimension(90, 110));
+    
+        // Add action listener to show pause menu
+        pauseButton.addActionListener(e -> {
+            isPaused = true; // Pause the game
+            PauseMenu pauseMenu = new PauseMenu(this);
+            pauseMenu.setVisible(true);
+            
+            // Check if game was continued
+            if (pauseMenu.wasGameContinued()) {
+                isPaused = false; // Resume the game
+            }
+        });
+    
+        return pauseButton;
+    }    
 
     private JPanel createSunPanel() {
         JPanel sunPanel = new JPanel() {
@@ -150,12 +182,12 @@ public class ScreenGame extends JFrame {
     private JPanel createTimerPanel() {
         JPanel timerPanel = new JPanel();
         timerPanel.setOpaque(false);
-
+    
         timerLabel = new JLabel(formatTime(remainingTime)); // Inicializar etiqueta del temporizador
         timerLabel.setForeground(Color.WHITE);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 16));
         timerPanel.add(timerLabel);
-
+    
         return timerPanel;
     }
 
@@ -181,10 +213,16 @@ public class ScreenGame extends JFrame {
                 {"EciPlant", "images/cartaEciPlant.jpg", "images/EciPlantCursor.png"}
         };
 
+        // Agregar botones de plantas
         for (String[] data : plantData) {
             JButton plantButton = createPlantButton(data[0], data[1], data[2]);
             backgroundPanel.add(plantButton);
         }
+
+        // Agregar boton de la pala
+        JButton shovelButton = createShovelButton();
+        shovelButton.setPreferredSize(new Dimension(80, 100)); 
+        backgroundPanel.add(shovelButton);
 
         return backgroundPanel;
     }
@@ -250,7 +288,14 @@ public class ScreenGame extends JFrame {
         Image scaledImage = roadIcon.getImage().getScaledInstance(200, 600, Image.SCALE_DEFAULT);
         JLabel roadLabel = new JLabel(new ImageIcon(scaledImage));
 
+        // Agregar el temporizador debajo de la imagen de la carretera
+        JPanel timerPanel = createTimerPanel();
+        timerPanel.setPreferredSize(new Dimension(200, 50)); // Establecer el tamaño del panel del temporizador
+
+
         rightPanel.add(roadLabel, BorderLayout.CENTER);
+        rightPanel.add(timerPanel, BorderLayout.SOUTH);
+
         return rightPanel;
     }
 
@@ -311,7 +356,7 @@ public class ScreenGame extends JFrame {
         // Crear GameCells para cada posición
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
-                GameCell cell = new GameCell(i, j);
+                GameCell cell = new GameCell(i, j, this);
                 cells[i][j] = cell;
                 panel.add(cell);
 
@@ -343,33 +388,35 @@ public class ScreenGame extends JFrame {
     private void gameOnePlayer() {
         // Crear un Timer para generar zombies periódicamente
         Timer zombieSpawnTimer = new Timer(10 * 1000, e -> { // Cada 10 segundos
-            boolean zombieAgregado = false; // Bandera para verificar si se agregó un zombie
+            if (!isPaused) {
+                boolean zombieAgregado = false; // Bandera para verificar si se agregó un zombie
 
-            while (!zombieAgregado) { // Repetir hasta que el zombie se agregue correctamente
-                try {
-                    // Obtener un zombie aleatorio desde el tablero
-                    HashMap<String, int[]> coordenadaZombie = board.gameOnePlayer();
+                while (!zombieAgregado) { // Repetir hasta que el zombie se agregue correctamente
+                    try {
+                        // Obtener un zombie aleatorio desde el tablero
+                        HashMap<String, int[]> coordenadaZombie = board.gameOnePlayer();
 
-                    if (coordenadaZombie != null && !coordenadaZombie.isEmpty()) {
-                        // Obtener la única entrada del HashMap
-                        java.util.Map.Entry<String, int[]> entry = coordenadaZombie.entrySet().iterator().next();
+                        if (coordenadaZombie != null && !coordenadaZombie.isEmpty()) {
+                            // Obtener la única entrada del HashMap
+                            java.util.Map.Entry<String, int[]> entry = coordenadaZombie.entrySet().iterator().next();
 
-                        // Extraer la clave (tipo de zombie) y el valor (posición)
-                        String zombieType = entry.getKey();
-                        int[] position = entry.getValue();
+                            // Extraer la clave (tipo de zombie) y el valor (posición)
+                            String zombieType = entry.getKey();
+                            int[] position = entry.getValue();
 
-                        // Validar la posición antes de agregar el zombie
-                        if (position[0] >= 0 && position[0] < ROWS && position[1] >= 0 && position[1] < COLS) {
-                            GameCell cell = cells[position[0]][position[1]];
+                            // Validar la posición antes de agregar el zombie
+                            if (position[0] >= 0 && position[0] < ROWS && position[1] >= 0 && position[1] < COLS) {
+                                GameCell cell = cells[position[0]][position[1]];
 
-                            // Intentar agregar el zombie; si la celda está ocupada, lanza excepción
-                            cell.addZombie(zombieType);
-                            cell.repaint();
-                            zombieAgregado = true; // Zombie agregado correctamente
+                                // Intentar agregar el zombie; si la celda está ocupada, lanza excepción
+                                cell.addZombie(zombieType);
+                                cell.repaint();
+                                zombieAgregado = true; // Zombie agregado correctamente
+                            }
                         }
-                    }
-                } catch (PoobVSZombiesExeption ex) {
+                    } catch (PoobVSZombiesExeption ex) {
 
+                    }
                 }
             }
 
@@ -383,4 +430,42 @@ public class ScreenGame extends JFrame {
     }
 
 
+    public void pauseGame() {
+        if (!isPaused) {
+            isPaused = true;
+            pauseMenu.setVisible(true);
+            
+            // Pause timers
+            if (gameTimer != null) gameTimer.stop();
+            if (zombieSpawnTimer != null) zombieSpawnTimer.stop();
+        }
+    }
+    
+    public void resumeGame() {
+        if (isPaused) {
+            isPaused = false;
+            pauseMenu.setVisible(false);
+            
+            // Resume timers
+            if (gameTimer != null) gameTimer.start();
+            if (zombieSpawnTimer != null) zombieSpawnTimer.start();
+        }
+    }
+    
+    public void saveGame() {
+        JOptionPane.showMessageDialog(this, "Partida guardada.", "Guardar", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public void exitGame() {
+        dispose(); // Cierra la ventana actual
+    }
+
+    public boolean getPauseGame(){
+        return isPaused;
+    }
+
+    public MainApp getMainApp() {
+        return mainApp;
+    }
+    
 }

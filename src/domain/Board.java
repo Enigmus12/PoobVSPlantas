@@ -37,25 +37,10 @@ public class Board {
         namePlayerOne = "";
         namePlayerTwo = "";
         this.characters= new Character[ROWS][COLS];
-        this.suns = 0;
+        this.suns = 50;
         this.zombieOriginal = new ZombiesOriginal();
         // Inicializar timers
-        initializeGameTimer();
         initializeSunGenerationTimer();
-    }
-
-
-    // Inicializa el timer del juego
-    private void initializeGameTimer() {
-        gameTimer = new Timer(100, e -> updateGameState());
-        gameTimer.start();
-    }
-
-    // Actualiza el estado del juego
-    public void updateGameState() {
-        // Generar soles periódicamente
-        generateSuns();
-
     }
 
     public static int getROWS() {

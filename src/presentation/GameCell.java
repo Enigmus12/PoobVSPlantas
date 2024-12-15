@@ -23,6 +23,7 @@ public class GameCell extends JButton {
     private Timer peaTimer;
     private List<Pea> peas; // Lista para almacenar las "peas"
     private boolean lawnmowerActive;
+    private ScreenGame screenGame; // Instancia de ScreenGame
     private static final Map<String, String> PLANT_IMAGES = Map.of(
             "SunFlower", "images/SunFlower.png",
             "PeasShooter", "images/PeasShooter.png",
@@ -37,7 +38,7 @@ public class GameCell extends JButton {
             "ZombieBuckethead","images/ZombieBuckethead.png"
     );
 
-    public GameCell(int row, int column) {
+    public GameCell(int row, int column, ScreenGame screenGame) {
         super();
         this.row = row;
         this.column = column;
@@ -51,6 +52,7 @@ public class GameCell extends JButton {
         haveZombie = false;
         this.board=Board.getBoard();
         this.lawnmowerActive=true;
+        this.screenGame = screenGame;
     }
 
     public int getRow() {
@@ -146,27 +148,29 @@ public class GameCell extends JButton {
 
     private void initializeZombieMovement() {
         moveTimer = new Timer(100, e -> {
-            bgX -= 3; // velocidad de movimiento
+            if (!screenGame.getPauseGame()) {
+                bgX -= 3; // velocidad de movimiento
 
-            // Si hay una planta en la celda anterior y estamos lo suficientemente cerca
-            if (previous != null && previous.currentPlantType != null && bgX <= getWidth() / 8) {
+                // Si hay una planta en la celda anterior y estamos lo suficientemente cerca
+                if (previous != null && previous.currentPlantType != null && bgX <= getWidth() / 8) {
 
-                ZombieAttack();
+                    ZombieAttack();
 
-                // Detener el movimiento cuando está muy cerca de la planta
-                ((Timer) e.getSource()).stop();
-                return;
-            }
+                    // Detener el movimiento cuando está muy cerca de la planta
+                    ((Timer) e.getSource()).stop();
+                    return;
+                }
 
-            repaint(); // Repintar en cada iteración para mostrar el movimiento
+                repaint(); // Repintar en cada iteración para mostrar el movimiento
 
-            if (bgX < -getWidth()) {
-                ((Timer) e.getSource()).stop();
-                send("Zombie", currentZombieType);
-                removeBackground();
-                occuped = false;
-                haveZombie = false;
-                currentZombieType = null;
+                if (bgX < -getWidth()) {
+                    ((Timer) e.getSource()).stop();
+                    send("Zombie", currentZombieType);
+                    removeBackground();
+                    occuped = false;
+                    haveZombie = false;
+                    currentZombieType = null;
+                }
             }
         });
         moveTimer.start();
@@ -205,15 +209,17 @@ public class GameCell extends JButton {
             currentZombieType = null;
         } else {
             moveTimer = new Timer(50, e -> {
-                bgX += 2; // Velocidad de movimiento hacia la derecha
+                if (!screenGame.getPauseGame()) {
+                    bgX += 2; // Velocidad de movimiento hacia la derecha
 
-                repaint();
+                    repaint();
 
-                if (bgX > getWidth()) { // Si sale de la celda actual
-                    ((Timer) e.getSource()).stop();
-                    next.receive("LawnMower", "LawnMower");
-                    removeBackground();
-                }
+                    if (bgX > getWidth()) { // Si sale de la celda actual
+                        ((Timer) e.getSource()).stop();
+                        next.receive("LawnMower", "LawnMower");
+                        removeBackground();
+                    }
+                }   
             });
             moveTimer.start();
         }
@@ -304,33 +310,35 @@ public class GameCell extends JButton {
 
         void startMovement() {
             movePeaTimer = new Timer(50, e -> {
-                x += 5;
-                if (x > getWidth()) {
-                    send("Pea", "Pea");
-                    peas.remove(this);
-                    movePeaTimer.stop();
-                } else if (hasZombie() && x >= bgX) {
-                    // Detener "pea" y continuar con el zombi
-                    peas.remove(this);
-                    movePeaTimer.stop();
-                    repaint();
-                    
-                    // Si el zombie es eliminado (vida llega a 0)
-                    if (!board.damageZombie(row, column, "Pea")) {
-                        // Eliminar visualmente el zombie
-                        backgroundImage = null;
-                        haveZombie = false;
-                        currentZombieType = null;
-                        
-                        // Detener el timer de movimiento del zombie
-                        if (moveTimer != null) {
-                            moveTimer.stop();
-                        }
-                        
+                if (!screenGame.getPauseGame()){
+                    x += 5;
+                    if (x > getWidth()) {
+                        send("Pea", "Pea");
+                        peas.remove(this);
+                        movePeaTimer.stop();
+                    } else if (hasZombie() && x >= bgX) {
+                        // Detener "pea" y continuar con el zombi
+                        peas.remove(this);
+                        movePeaTimer.stop();
                         repaint();
+                        
+                        // Si el zombie es eliminado (vida llega a 0)
+                        if (!board.damageZombie(row, column, "Pea")) {
+                            // Eliminar visualmente el zombie
+                            backgroundImage = null;
+                            haveZombie = false;
+                            currentZombieType = null;
+                            
+                            // Detener el timer de movimiento del zombie
+                            if (moveTimer != null) {
+                                moveTimer.stop();
+                            }
+                            
+                            repaint();
+                        }
                     }
+                    repaint();
                 }
-                repaint();
             });
             movePeaTimer.start();
         }
@@ -339,14 +347,16 @@ public class GameCell extends JButton {
     private void ZombieAttack() {
         if (previous.currentPlantType != null && currentZombieType != null) {
             Timer attackTimer = new Timer(1000, e -> {
-                // Aplicar daño a la planta
-                if(!board.ZombieAttack(row,column)){
-                    previous.removePlant();
-                    send("Zombie",currentZombieType);
-                    return;
+                if (!screenGame.getPauseGame()){
+                    // Aplicar daño a la planta
+                    if(!board.ZombieAttack(row,column)){
+                        previous.removePlant();
+                        send("Zombie",currentZombieType);
+                        return;
+                    }
+                    
+                    repaint();
                 }
-                
-                repaint();
             });
             attackTimer.setRepeats(true);
             attackTimer.start();
