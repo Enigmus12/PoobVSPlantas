@@ -293,8 +293,15 @@ public class Board {
             Zombie zombie = (Zombie) characters[row][column];
             plant.receiveDamage(zombie.getDamage());
             System.out.println("si se hizo daño"+plant.getHealth());
+    }
+    public void lawnmower(int row){
+        for (int col = 0; col < characters[row].length; col++) {
+            characters[row][col]=null;
+        }
+    }
 
-
+    public String getNamePlayerOne() {
+        return namePlayerOne;
     }
 }
 

@@ -22,7 +22,7 @@ public class GameCell extends JButton {
     private boolean haveZombie;
     private Timer peaTimer;
     private List<Pea> peas; // Lista para almacenar las "peas"
-
+    private boolean lawnmowerActive;
     private static final Map<String, String> PLANT_IMAGES = Map.of(
             "SunFlower", "images/SunFlower.png",
             "PeasShooter", "images/PeasShooter.png",
@@ -48,6 +48,7 @@ public class GameCell extends JButton {
         setContentAreaFilled(false);
         haveZombie = false;
         this.board=Board.getBoard();
+        this.lawnmowerActive=true;
     }
 
     public int getRow() {
@@ -89,7 +90,7 @@ public class GameCell extends JButton {
             System.out.println("Cannot place plant. Zombie present in cell.");
             return;
         }
-        
+
         this.currentPlantType = plantType;
         if (plantType.equals("PeasShooter")) {
             startPeaTimer();
@@ -142,20 +143,20 @@ public class GameCell extends JButton {
 
     private void initializeZombieMovement() {
         moveTimer = new Timer(100, e -> {
-            bgX -= 5; // velocidad de movimiento
-            
+            bgX -= 8; // velocidad de movimiento
+
             // Si hay una planta en la celda anterior y estamos lo suficientemente cerca
             if (previous != null && previous.currentPlantType != null && bgX <= getWidth() / 8) {
 
                 ZombieAttack();
-                
+
                 // Detener el movimiento cuando está muy cerca de la planta
                 ((Timer) e.getSource()).stop();
                 return;
             }
-            
+
             repaint(); // Repintar en cada iteración para mostrar el movimiento
-    
+
             if (bgX < -getWidth()) {
                 ((Timer) e.getSource()).stop();
                 send("Zombie", currentZombieType);
@@ -174,15 +175,43 @@ public class GameCell extends JButton {
         }
 
     }
-    
+
 
     private void send(String type, String typeCharacter) {
         if ("Pea".equals(type)) {
             sendPea();
         } else if ("Zombie".equals(type)) {
             sendZombie();
+        }else if("LawnMower".equals(type)){
+            sendLawnMower();
+
         }
     }
+
+    private void sendLawnMower() {
+        if (next == null) {
+            if (moveTimer != null) {
+                moveTimer.stop();
+            }
+            removeBackground();
+            haveZombie = false;
+            currentZombieType = null;
+        } else {
+            moveTimer = new Timer(50, e -> {
+                bgX += 8; // Velocidad de movimiento hacia la derecha
+
+                repaint();
+
+                if (bgX > getWidth()) { // Si sale de la celda actual
+                    ((Timer) e.getSource()).stop();
+                    next.receive("LawnMower", "LawnMower");
+                    removeBackground();
+                }
+            });
+            moveTimer.start();
+        }
+    }
+
 
     private void sendPea() {
         if (next != null) {
@@ -194,16 +223,33 @@ public class GameCell extends JButton {
     private void sendZombie() {
         if (previous != null) {
             if (!previous.isOccupied()) {
-                previous.receive("Zombie", currentZombieType);
-                board.moveZombie(row, column);
-                
-                // Limpiar completamente el estado actual
-                this.haveZombie = false;
-                this.currentZombieType = null;
-                this.backgroundImage = null;
+                if(previous.getColumn()==0){
+                    chekLawnMower();
+                }else {
+                    previous.receive("Zombie", currentZombieType);
+                    board.moveZombie(row, column);
+
+                    // Limpiar completamente el estado actual
+                    this.haveZombie = false;
+                    this.currentZombieType = null;
+                    this.backgroundImage = null;
+                }
             }
+        }else {
+            JOptionPane.showMessageDialog(null, "Perdiste", "sigue intentando", JOptionPane.INFORMATION_MESSAGE);
+            //arreglar el pausa y fin aca se agrega
+        }
+
+    }
+
+    private void chekLawnMower() {
+        if (lawnmowerActive) {
+            send("LawnMower", "LawnMower");
+            board.lawnmower(row); // Notifica al tablero que se activó
+            lawnmowerActive = false; // Desactiva el lawnmower después de su uso
         }
     }
+
 
     public void removeBackground() {
         this.backgroundImage = null;
@@ -212,7 +258,7 @@ public class GameCell extends JButton {
 
     public void addLawnMower(int row) {
         setBackgroundImage("images/Mower.png");
-        occuped = true;
+        lawnmowerActive=true;
     }
 
     @Override
