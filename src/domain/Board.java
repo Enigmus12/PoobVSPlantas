@@ -147,8 +147,10 @@ public class Board {
     private Zombie createZombie(String zombieType, int row, int column) {
         if (zombieType.equals("ZombieBasic")) {
             return new BasicZombie(row, column);
-        } else if (zombieType.equals("ConeHeadZombie")) {
+        } else if (zombieType.equals("ZombieConehead")) {
             return new ConeheadZombie(row, column);
+        } else if(zombieType.equals("ZombieBuckethead")){
+            return new BucketheadZombie(row,column);
         }
         return null;
     }

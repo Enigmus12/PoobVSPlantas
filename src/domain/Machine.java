@@ -20,7 +20,8 @@ public abstract class Machine {
     // Bloque estático para inicializar la lista
     static {
         listaZombies.add("ZombieBasic");
-
+        listaZombies.add("ZombieConehead");
+        listaZombies.add("ZombieBuckethead");
     }
 
 }

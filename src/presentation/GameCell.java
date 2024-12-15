@@ -32,7 +32,9 @@ public class GameCell extends JButton {
     );
 
     private static final Map<String, String> ZOMBIE_IMAGES = Map.of(
-            "ZombieBasic", "images/ZombieBasic.png"
+            "ZombieBasic", "images/ZombieBasic.png",
+            "ZombieConehead", "images/ZombieConehead.png",
+            "ZombieBuckethead","images/ZombieBuckethead.png"
     );
 
     public GameCell(int row, int column) {
