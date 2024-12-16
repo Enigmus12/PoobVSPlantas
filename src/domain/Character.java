@@ -31,28 +31,63 @@ public abstract class Character {
         this.positionX = x;
         this.positionY = y;
     }
-
+/**
+     * Establece la salud del objeto.
+     *
+     * @param health La nueva salud del objeto.
+     */
     public void setHealth(int health) {
         this.health = health;
     }
 
-
-
-
-    
-    public int getPositionX() { 
-        return positionX; 
+    /**
+     * Obtiene la salud actual del objeto.
+     *
+     * @return La salud actual del objeto.
+     */
+    public int getHealth() {
+        return health;
     }
+
+    // Métodos relacionados con la posición X
+
+    /**
+     * Obtiene la posición X actual del objeto en el tablero.
+     *
+     * @return La posición X actual del objeto.
+     */
+    public int getPositionX() {
+        return positionX;
+    }
+
+    /**
+     * Establece una nueva posición X para el objeto en el tablero.
+     *
+     * @param positionX La nueva posición X del objeto.
+     */
     public void setPositionX(int positionX) {
         this.positionX = positionX;
     }
-    public int getPositionY() { 
-        return positionY; 
+
+    // Métodos relacionados con la posición Y
+
+    /**
+     * Obtiene la posición Y actual del objeto en el tablero.
+     *
+     * @return La posición Y actual del objeto.
+     */
+    public int getPositionY() {
+        return positionY;
     }
+
+    /**
+     * Establece una nueva posición Y para el objeto en el tablero.
+     *
+     * @param positionY La nueva posición Y del objeto.
+     */
     public void setPositionY(int positionY) {
         this.positionY = positionY;
     }
-    public int getHealth() { return health; }
-
+    
 
 }
