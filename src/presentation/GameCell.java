@@ -110,6 +110,7 @@ public class GameCell extends JButton {
                 peaTimer.stop();
             }
             this.currentPlantType = null;
+            this.occuped=false;
             this.backgroundImage = null;
             repaint();
             board.removePlant(row,column);
@@ -246,6 +247,7 @@ public class GameCell extends JButton {
                     this.haveZombie = false;
                     this.currentZombieType = null;
                     this.backgroundImage = null;
+
                 }
             }
         }
@@ -253,7 +255,6 @@ public class GameCell extends JButton {
     }
 
     private void chekLawnMower() {
-        System.out.println(lawnmowerActive);
         if (lawnmowerActive) {
 
             send("LawnMower", "LawnMower");
@@ -286,12 +287,7 @@ public class GameCell extends JButton {
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage.getImage(), bgX, bgY, getWidth(), getHeight(), this);
         }
-        
-        // Si hay planta, dibujarla
-        if (currentPlantType != null) {
-            ImageIcon plantIcon = new ImageIcon(PLANT_IMAGES.get(currentPlantType));
-            g2d.drawImage(plantIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
-        }
+
         
         // Dibujar "peas"
         for (Pea pea : peas) {
@@ -347,21 +343,18 @@ public class GameCell extends JButton {
     private void ZombieAttack() {
         if (previous.currentPlantType != null && currentZombieType != null) {
             Timer attackTimer = new Timer(1000, e -> {
-                if (!screenGame.getPauseGame()){
-                    // Aplicar daño a la planta
-                    if(!board.ZombieAttack(row,column)){
-                        previous.removePlant();
-                        send("Zombie",currentZombieType);
-                        return;
-                    }
-                    
-                    repaint();
+                // Aplicar daño a la planta
+                if(!board.ZombieAttack(row,column)){
+                    previous.removePlant();
+                    send("Zombie",currentZombieType);
+                    return;
                 }
+                
+                repaint();
             });
             attackTimer.setRepeats(true);
             attackTimer.start();
         }
-
     }
 
 }
