@@ -22,7 +22,6 @@ public class ScreenGame extends JFrame {
     private boolean isPaused = false;
     private Timer gameTimer;
     private Timer zombieSpawnTimer;
-    private MainApp mainApp; // Referencia al controlador principal
 
 
     public ScreenGame(MainApp app,String modeGame ) {
@@ -465,7 +464,7 @@ public class ScreenGame extends JFrame {
     }
 
     public MainApp getMainApp() {
-        return mainApp;
+        return app;
     }
     
 }

@@ -15,20 +15,6 @@ public class SunFlower extends Plant {
         this.lastSunTime = System.currentTimeMillis();  // Inicializar la última vez que generó soles
     }
 
-    /**
-     * Generar soles
-     * @return cantidad de soles generados
-     */
-    public int generateSuns() {
-        long currentTime = System.currentTimeMillis();
-
-        // Solo generar soles si la planta está viva y han pasado los 20 segundos
-        if (health > MIN_HEALTH && (currentTime - lastSunTime >= PRODUCTION_TIME_MS)) {
-            lastSunTime = currentTime;  // Actualizar el tiempo de generación
-            return SUN_PRODUCTION;  // Generar 25 soles
-        }
-        return 0;  // No generar soles si no pasaron 20 segundos o si la planta está muerta
-    }
 
     public void setHealth(int health) {
         this.health = health;
