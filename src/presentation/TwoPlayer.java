@@ -80,21 +80,18 @@ public class TwoPlayer extends JFrame {
         // Posicionar los botones inicialmente
         repositionButtons();
     }
+
     public void prepareActions() {
         back.addActionListener(e -> mainApp.showMainMenu());
-play.addActionListener(e -> {
-    String name1 = userNameOnePlayer.getText().trim(); // Eliminar espacios al inicio y al final
-    String name2 = userNameTwoPlayer.getText().trim();
-
-    try {
-        board.validateNameTwoPlayers(name1, name2); // Validar nombre del jugador 1
-        mainApp.showScreenGame("TwoPlayer");
-    } catch (PoobVSZombiesExeption exception) {
-        JOptionPane.showMessageDialog(this, exception.getMessage(),
-                                      "Error de Validación", JOptionPane.WARNING_MESSAGE);
-    }
-});
-    }
+        play.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this,
+                    "La funcionalidad de dos jugadores está en Construccion.\n¡Próximamente estará disponible!",
+                    "Funcionalidad en mantenimiento",
+                    JOptionPane.INFORMATION_MESSAGE);
+        });
+        
+    };
+    
 
     public void repositionButtons(){
         // Obtener dimensiones del panel

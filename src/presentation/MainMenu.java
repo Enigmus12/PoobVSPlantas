@@ -112,15 +112,17 @@ public class MainMenu extends JFrame {
         });
 
         // Acción del botón "Machine VS Machine"
-        machineVsMachine.addActionListener(e ->{
-            mainApp.showScreenGame("Machines");
-            mainApp.setGameMode("Machine vs Machine");
-        }
-        );
+        machineVsMachine.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this,
+                    "La funcionalidad 'Máquina VS Máquina' está en Construccion.\n¡Próximamente estará disponible!",
+                    "Funcionalidad en mantenimiento",
+                    JOptionPane.INFORMATION_MESSAGE);
+        });
+        
 
         // Acción del botón "Exit"
         exit.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit?",
+            int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de que deseas salir del juego?",
                     "Confirm Exit", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 System.exit(0);

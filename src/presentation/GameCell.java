@@ -211,7 +211,7 @@ public class GameCell extends JButton {
         } else {
             moveTimer = new Timer(50, e -> {
                 if (!screenGame.getPauseGame()) {
-                    bgX += 2; // Velocidad de movimiento hacia la derecha
+                    bgX += 5; // Velocidad de movimiento hacia la derecha
 
                     repaint();
 
