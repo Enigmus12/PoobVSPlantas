@@ -343,18 +343,31 @@ public class GameCell extends JButton {
     private void ZombieAttack() {
         if (previous.currentPlantType != null && currentZombieType != null) {
             Timer attackTimer = new Timer(1000, e -> {
-                // Aplicar daño a la planta
-                if(!board.ZombieAttack(row,column)){
-                    previous.removePlant();
-                    send("Zombie",currentZombieType);
-                    return;
+                if (!screenGame.getPauseGame()){
+                    // Aplicar daño a la planta
+                    if(!board.ZombieAttack(row,column)){
+                        previous.removePlant();
+                        send("Zombie",currentZombieType);
+
+                        // Detener el timer de ataque actual
+                        ((Timer)e.getSource()).stop();
+
+                        // Reiniciar el movimiento del zombie
+                        if (moveTimer != null) {
+                            moveTimer.stop();
+                        }
+
+                        // Reiniciar el movimiento del zombie
+                        initializeZombieMovement();
+
+                        return;
+                    }
+
+                    repaint();
                 }
-                
-                repaint();
             });
             attackTimer.setRepeats(true);
             attackTimer.start();
         }
     }
-
 }
