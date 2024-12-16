@@ -141,15 +141,13 @@ public class ScreenGame extends JFrame {
         pauseButton.setIcon(new ImageIcon(scaledImage));
         pauseButton.setPreferredSize(new Dimension(90, 110));
     
-        // Add action listener to show pause menu
         pauseButton.addActionListener(e -> {
-            isPaused = true; // Pause the game
+            isPaused = true; // Pause el juego
             PauseMenu pauseMenu = new PauseMenu(this);
             pauseMenu.setVisible(true);
             
-            // Check if game was continued
             if (pauseMenu.wasGameContinued()) {
-                isPaused = false; // Resume the game
+                isPaused = false; 
             }
         });
     

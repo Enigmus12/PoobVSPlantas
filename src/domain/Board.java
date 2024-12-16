@@ -1,6 +1,5 @@
 package domain;
 
-import java.util.ArrayList;
 import javax.swing.Timer;
 import java.util.HashMap;
 
@@ -153,7 +152,7 @@ public class Board {
         Zombie zombie = (Zombie) currentCell;
 
         // Verifica si puede moverse a la siguiente celda
-        int newColumn = column - 1; // El zombie se mueve hacia la izquierda
+        int newColumn = column  - 1; // El zombie se mueve hacia la izquierda
         if (newColumn < 0) {
             return; // El zombie no puede moverse fuera del tablero
         }
@@ -265,6 +264,11 @@ public class Board {
 
     public void removePlant(int row, int column) {
         characters[row][column]=null;
+    }
+
+    // Método para añadir soles (usado por SunFlower)
+    public void addSuns(int sunAmount) {
+        suns += sunAmount;
     }
 }
 

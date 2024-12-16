@@ -23,12 +23,5 @@ public abstract class Zombie extends Character {
     public int getDamage() {
         return damage;
     }
-
-    public void attack(Character target) {
-        if (target instanceof Plant) {
-            target.receiveDamage(damage);
-        }
-    }
-
-
+    
 }

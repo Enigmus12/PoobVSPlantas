@@ -150,7 +150,7 @@ public class GameCell extends JButton {
     private void initializeZombieMovement() {
         moveTimer = new Timer(100, e -> {
             if (!screenGame.getPauseGame()) {
-                bgX -= 3; // velocidad de movimiento
+                bgX -= 1; // velocidad de movimiento
 
                 // Si hay una planta en la celda anterior y estamos lo suficientemente cerca
                 if (previous != null && previous.currentPlantType != null && bgX <= getWidth() / 8) {
